@@ -1,5 +1,7 @@
 
 .DS_Store
 Gruntfile.js
-node_modules/*
+node_modules
 *.json
+ScreepsAutocomplete
+.tern-project
