@@ -1,6 +1,9 @@
 // SetMemory start here
 
 function BasicFolders() {
+    if (!Memory.Information) Memory.Information = {};
+    else Memory.Information = Memory.Information;
+
     if (!Memory.RoomsState) Memory.RoomsState = {};
     else Memory.RoomsState = Memory.RoomsState;
 
