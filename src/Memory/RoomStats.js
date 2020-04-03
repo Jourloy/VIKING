@@ -1,9 +1,9 @@
 //RoomStats start here
 
 /**
- * @param {Object} room
- * @param {string} target
- */
+* @param {Object} room
+* @param {string} target
+*/
 function CheckController(room, target) {
     if(target == "State") {
         if (room.controller) return true;
@@ -40,9 +40,9 @@ function CheckController(room, target) {
 }
 
 /**
- * @param {Object} room
- * @param {string} target
- */
+* @param {Object} room
+* @param {string} target
+*/
 function checkStorage(room, target) {
     if(target == "State") {
         if (room.storage) return true;
@@ -60,9 +60,9 @@ function checkStorage(room, target) {
 }
 
 /**
- * @param {Object} room
- * @param {string} target
- */
+* @param {Object} room
+* @param {string} target
+*/
 function checkRoom(room, target) {
     if(target == "EnergyBalance") {
         if (room.storage) {
@@ -101,9 +101,9 @@ function checkRoom(room, target) {
 }
 
 /**
- * @param {Object} room
- * @param {string} target
- */
+* @param {Object} room
+* @param {string} target
+*/
 function checkTerminal(room, target) {
     if(target == "State") {
         if (room.terminal) return true;
@@ -121,8 +121,8 @@ function checkTerminal(room, target) {
 }
 
 /**
- * @param {string} target
- */
+* @param {string} target
+*/
 function checkPlayer(target) {
     if(target == "Credits") {
         return null;
@@ -134,57 +134,57 @@ function checkPlayer(target) {
 function RoomStats() {
     let Info;
 
-    Memory.Information = [];
-
     for (i in Game.rooms) {
         let room = Game.rooms[i];
 
         Info = {
-            Rooms:{
-                RoomName:room.name,
-                EnergyBalance:checkRoom(room, "EnergyBalance"),
-                HostileCreeps:checkRoom(room, "HostileCreeps"),
-                EnergySources:checkRoom(room, "EnergySources"),
-                FirstSource:checkRoom(room, "Source1"),
-                SecondSource:checkRoom(room, "Source2"),
-                RoomMineral:checkRoom(room, "RoomMineral"),
-                Nukes:checkRoom(room, "Nuke"),
-                Controller:{
-                    ControllerState:CheckController(room, "State"),
-                    ControllerIsMy:CheckController(room, "IsMy"),
-                    ControllerReserved:CheckController(room, "Reserved"),
-                    ControllerLevel:CheckController(room, "Level"),
-                    ControllerProgress:CheckController(room, "Progress"),
-                    ControllerDowngrade:CheckController(room, "Downgrade"),
-                    ControllerSign:CheckController(room, "Sign"),
-                    ControllerSafeMode:CheckController(room, "SafeMode"),
-                    ControllerSafeModeAvailable:CheckController(room, "SafeModeAvailable"),
-                    ControllerSafeModeCooldown:CheckController(room, "SafeModeCooldown"),
-                },
-                Terminal:{
-                    TerminalState:checkTerminal(room, "State"),
-                    TerminalCapacityUsed:checkTerminal(room, "CapacityUsed"),
-                    TerminalCapacityFree:checkTerminal(room, "CapacityFree"),
-                    TerminalCapacityEnergy:checkTerminal(room, "CapacityEnergy"),
-                },
-                Storage:{
-                    StorageState:checkStorage(room, "State"),
-                    StorageCapacityUsed:checkStorage(room, "CapacityUsed"),
-                    StorageCapacityFree:checkStorage(room, "CapacityFree"),
-                    StorageCapacityEnergy:checkStorage(room, "CapacityEnergy"),
-                },
-            }
+            RoomName:room.name,
+            EnergyBalance:checkRoom(room, "EnergyBalance"),
+            HostileCreeps:checkRoom(room, "HostileCreeps"),
+            EnergySources:checkRoom(room, "EnergySources"),
+            FirstSource:checkRoom(room, "Source1"),
+            SecondSource:checkRoom(room, "Source2"),
+            RoomMineral:checkRoom(room, "RoomMineral"),
+            Nukes:checkRoom(room, "Nuke"),
+            Controller:{
+                ControllerState:CheckController(room, "State"),
+                ControllerIsMy:CheckController(room, "IsMy"),
+                ControllerReserved:CheckController(room, "Reserved"),
+                ControllerLevel:CheckController(room, "Level"),
+                ControllerProgress:CheckController(room, "Progress"),
+                ControllerDowngrade:CheckController(room, "Downgrade"),
+                ControllerSign:CheckController(room, "Sign"),
+                ControllerSafeMode:CheckController(room, "SafeMode"),
+                ControllerSafeModeAvailable:CheckController(room, "SafeModeAvailable"),
+                ControllerSafeModeCooldown:CheckController(room, "SafeModeCooldown"),
+            },
+            Terminal:{
+                TerminalState:checkTerminal(room, "State"),
+                TerminalCapacityUsed:checkTerminal(room, "CapacityUsed"),
+                TerminalCapacityFree:checkTerminal(room, "CapacityFree"),
+                TerminalCapacityEnergy:checkTerminal(room, "CapacityEnergy"),
+            },
+            Storage:{
+                StorageState:checkStorage(room, "State"),
+                StorageCapacityUsed:checkStorage(room, "CapacityUsed"),
+                StorageCapacityFree:checkStorage(room, "CapacityFree"),
+                StorageCapacityEnergy:checkStorage(room, "CapacityEnergy"),
+            },
         }
+
+        Memory.Information[room.name] = Info;
     }
-    Memory.Information = Info;
 }
 
 /**
- * @param {string} RoomName
- */
+* @param {string} RoomName
+*/
 function CalculateRoom(roomName) {
+
     const room = Game.rooms[roomName];
     const spawns = room.find(FIND_MY_SPAWNS);
+    const sources = room.find(FIND_SOURCES);
+
     if (spawns[0]) {
         const spawnFlag = spawns[0].pos.lookFor(LOOK_FLAGS);
         if (spawnFlag.length && spawnFlag[0].color == COLOR_WHITE && spawnFlag[0].secondaryColor == COLOR_WHITE) {
@@ -194,5 +194,7 @@ function CalculateRoom(roomName) {
             spawns[0].pos.createFlag(flagName, COLOR_WHITE, COLOR_WHITE);
             AddInMemory(roomName, flagName, "SpawnFlags");
         }
+
+        Memory.RoomsState[roomName] = true;
     }
 }
