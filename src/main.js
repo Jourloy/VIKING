@@ -31,6 +31,51 @@ function GenerateString(length) {
     return result;
 }
 
+/**
+ * @param {Object} spawn
+ * @param {list} pattern
+ * @param {int} count
+ * @param {bool} notBalance
+ * @return {list}
+ */
+
+function getBodyParts(spawn, pattern, count, notBalance) {
+
+    if (!spawn) return 'Need parameter [Spawn]';
+    if (!pattern) return 'Need parameter [Pattern]';
+    if (!count || count == null) count = 25;
+    if (!notBalance) notBalance = false;
+
+    let body = [];
+    let prepareBody = [];
+    let amountEnergy = spawn.room.energyCapacityAvailable;
+    let bodyCost = 0;
+
+    count = count * 2;
+
+    if (!notBalance) {
+        for (let i = 0; i < count/2; i++) {
+            prepareBody.push(pattern[i%pattern.length]);
+            prepareBody.push(MOVE);
+        }
+    }
+
+    // TODO: Дописать getBodyParts
+
+    for (i in prepareBody) {
+        if (prepareBody[i] != MOVE && bodyCost + BODYPART_COST[prepareBody[i]] + 50 < amountEnergy) {
+            body.push(prepareBody[i]);
+            body.push(MOVE)
+            bodyCost += BODYPART_COST[prepareBody[i]] + 50;
+        }
+    }
+    return body
+}
+
+function spawnCreep() {
+
+}
+
 module.exports.loop = function () {
     SetMemory();
     RoomStats();
