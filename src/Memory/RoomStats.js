@@ -1,5 +1,9 @@
 //RoomStats start here
 
+/**
+ * @param {Object} room
+ * @param {string} target
+ */
 function CheckController(room, target) {
     if(target == "State") {
         if (room.controller) return true;
@@ -35,6 +39,10 @@ function CheckController(room, target) {
     }
 }
 
+/**
+ * @param {Object} room
+ * @param {string} target
+ */
 function checkStorage(room, target) {
     if(target == "State") {
         if (room.storage) return true;
@@ -51,7 +59,10 @@ function checkStorage(room, target) {
     }
 }
 
-
+/**
+ * @param {Object} room
+ * @param {string} target
+ */
 function checkRoom(room, target) {
     if(target == "EnergyBalance") {
         if (room.storage) {
@@ -89,6 +100,10 @@ function checkRoom(room, target) {
     }
 }
 
+/**
+ * @param {Object} room
+ * @param {string} target
+ */
 function checkTerminal(room, target) {
     if(target == "State") {
         if (room.terminal) return true;
@@ -105,6 +120,9 @@ function checkTerminal(room, target) {
     }
 }
 
+/**
+ * @param {string} target
+ */
 function checkPlayer(target) {
     if(target == "Credits") {
         return null;
@@ -158,6 +176,23 @@ function RoomStats() {
             }
         }
     }
-
     Memory.Information = Info;
+}
+
+/**
+ * @param {string} RoomName
+ */
+function CalculateRoom(roomName) {
+    const room = Game.rooms[roomName];
+    const spawns = room.find(FIND_MY_SPAWNS);
+    if (spawns[0]) {
+        const spawnFlag = spawns[0].pos.lookFor(LOOK_FLAGS);
+        if (spawnFlag.length && spawnFlag[0].color == COLOR_WHITE && spawnFlag[0].secondaryColor == COLOR_WHITE) {
+            //
+        } else {
+            const flagName = 'Spawn:' + GenerateString(6);
+            spawns[0].pos.createFlag(flagName, COLOR_WHITE, COLOR_WHITE);
+            AddInMemory(roomName, flagName, "SpawnFlags");
+        }
+    }
 }
