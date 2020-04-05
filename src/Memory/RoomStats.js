@@ -97,6 +97,17 @@ function checkRoom(room, target) {
         return source[0].id;
     } else if(target == "Nuke") {
         return false;
+    } else if (target == "Spawn1") {
+        const spawns = room.find(FIND_MY_SPAWNS);
+        return spawns[0].id;
+    } else if (target == "Spawn2") {
+        const spawns = room.find(FIND_MY_SPAWNS);
+        if (spawns[1].id) return spawns[1].id;
+        else return null;
+    } else if (target == "Spawn3") {
+        const spawns = room.find(FIND_MY_SPAWNS);
+        if (spawns[2].id) return spawns[2].id;
+        else return null;
     }
 }
 
@@ -144,6 +155,9 @@ function RoomStats() {
             EnergySources:checkRoom(room, "EnergySources"),
             FirstSource:checkRoom(room, "Source1"),
             SecondSource:checkRoom(room, "Source2"),
+            Spawn1:checkRoom(room, "Spawn1"),
+            Spawn2:checkRoom(room, "Spawn2"),
+            Spawn3:checkRoom(room, "Spawn3"),
             RoomMineral:checkRoom(room, "RoomMineral"),
             Nukes:checkRoom(room, "Nuke"),
             Controller:{
@@ -173,28 +187,5 @@ function RoomStats() {
         }
 
         Memory.Information[room.name] = Info;
-    }
-}
-
-/**
-* @param {string} RoomName
-*/
-function CalculateRoom(roomName) {
-
-    const room = Game.rooms[roomName];
-    const spawns = room.find(FIND_MY_SPAWNS);
-    const sources = room.find(FIND_SOURCES);
-
-    if (spawns[0]) {
-        const spawnFlag = spawns[0].pos.lookFor(LOOK_FLAGS);
-        if (spawnFlag.length && spawnFlag[0].color == COLOR_WHITE && spawnFlag[0].secondaryColor == COLOR_WHITE) {
-            //
-        } else {
-            const flagName = 'Spawn:' + GenerateString(6);
-            spawns[0].pos.createFlag(flagName, COLOR_WHITE, COLOR_WHITE);
-            AddInMemory(roomName, flagName, "SpawnFlags");
-        }
-
-        Memory.RoomsState[roomName] = true;
     }
 }
