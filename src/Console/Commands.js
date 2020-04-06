@@ -1,8 +1,29 @@
 // Commands start here
 
+
+
+/**
+ * @param {string} username
+ */
 global.AddPlayerInFriend = function(username) {
-    if (!Memory.Friends.includes(username)) Memory.Friends.push(username);
-    else console.log(`Oops. ${username} already in your friend list.`)
+    if (!Memory.Friends.includes(username)) {
+        Memory.Friends.push(username);
+        logging(`${username} added in your friend list`);
+    }
+    else warning(`Oops. ${username} already in your friend list.`);
+    return ``;
+}
+
+/**
+ * @param {string} username
+ */
+global.DeletePlayerFromFriend = function(username) {
+    if (Memory.Friends.includes(username)) {
+        delete Memory.Friends[username];
+        logging(`${username} deleted from your friend list`);
+    }
+    else warning(`Oops. ${username} already is not your friend.`);
+    return ``;
 }
 
 global.ClearFlags = function() {
