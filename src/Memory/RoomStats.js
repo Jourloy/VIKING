@@ -99,14 +99,15 @@ function checkRoom(room, target) {
         return false;
     } else if (target == "Spawn1") {
         const spawns = room.find(FIND_MY_SPAWNS);
-        return spawns[0].id;
+        if (spawns[0]) return spawns[0].id;
+        else return null;
     } else if (target == "Spawn2") {
         const spawns = room.find(FIND_MY_SPAWNS);
-        if (spawns[1].id) return spawns[1].id;
+        if (spawns[1]) return spawns[1].id;
         else return null;
     } else if (target == "Spawn3") {
         const spawns = room.find(FIND_MY_SPAWNS);
-        if (spawns[2].id) return spawns[2].id;
+        if (spawns[2]) return spawns[2].id;
         else return null;
     }
 }
