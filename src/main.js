@@ -192,6 +192,10 @@ function spawnCreep() {
     }
 }
 
+// 20 20
+const RCL2 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+4,"y":y+1}]}}
+const RCL3 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2},{"x":x+4,"y":y+1},{"x":x+4,"y":y},{"x":x+4,"y":y-1},{"x":x+3,"y":y},{"x":x+3,"y":y-1}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+3,"y":y+1},{"x":x+4,"y":y+2},{"x":x+2,"y":y-1},{"x":x+3,"y":y-2},{"x":x+4,"y":y-2}]},"tower":{"pos":[{"x":x+5,"y":y+3}]}};
+
 module.exports.loop = function () {
     SetMemory();
     RoomStats();
