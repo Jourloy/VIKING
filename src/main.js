@@ -15,7 +15,7 @@ const MY_USERNAME = 'JOURLOY';
 const YOUR_USERNAME = 'soon';
 
 // Don't change this. Use command ChangeSign('') in console for change this sign.
-const SIGN = '╔══════════════════╗”\n“║................VIKING................║”\n“╚══════════════════╝';
+const SIGN = 'VIKING';
 
 /**
  * @param {int} length
@@ -29,6 +29,39 @@ function GenerateString(length) {
         result += chars[Math.floor(Math.random() * chars.length)];
     }
     return result;
+}
+
+/**
+ * @param {?} direction
+ * @return {?}
+ */
+DefenceDirection(direction) {
+    switch (direction) {
+        case TOP:
+            return BOTTOM;
+            break;
+        case TOP_LEFT:
+            return BOTTOM_RIGHT;
+            break;
+        case LEFT:
+            return RIGHT;
+            break;
+        case BOTTOM_LEFT:
+            return TOP_RIGHT;
+            break;
+        case BOTTOM:
+            return TOP;
+            break;
+        case BOTTOM_RIGHT:
+            return TOP_LEFT;
+            break;
+        case RIGHT:
+            return LEFT;
+            break;
+        case TOP_RIGHT:
+            return BOTTOM_LEFT;
+            break;
+    }
 }
 
 /**
