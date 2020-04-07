@@ -33,7 +33,6 @@ function CheckStructures(room, basicStructures) {
  * @param {Object} room
  */
 function RCL2RoomBuilder(room) {
-
     if (!room.memory.build) {
         const basicStructures = {
             spawns:1,
@@ -42,9 +41,99 @@ function RCL2RoomBuilder(room) {
 
         CheckStructures(room, basicStructures);
     }
+}
 
-    // const roads
-    // TODO:
+function RCL3RoomBuilder(room) {
+    if (!room.memory.build) {
+        const basicStructures = {
+            spawns:1,
+            extensions:10,
+            towers:1
+        }
+
+        CheckStructures(room, basicStructures);
+    }
+}
+
+function RCL4RoomBuilder(room) {
+    if (!room.memory.build) {
+        const basicStructures = {
+            spawns:1,
+            extensions:20,
+            towers:1,
+            storage:1
+        }
+
+        CheckStructures(room, basicStructures);
+    }
+}
+
+function RCL5RoomBuilder(room) {
+    if (!room.memory.build) {
+        const basicStructures = {
+            spawns:1,
+            extensions:30,
+            towers:2,
+            storage:1
+        }
+
+        CheckStructures(room, basicStructures);
+    }
+}
+
+function RCL6RoomBuilder(room) {
+    if (!room.memory.build) {
+        const basicStructures = {
+            spawns:1,
+            extensions:40,
+            towers:2,
+            storage:1,
+            terminal:1,
+            lab:3,
+            container:1,
+            extractor:1
+        }
+
+        CheckStructures(room, basicStructures);
+    }
+}
+
+function RCL7RoomBuilder(room) {
+    if (!room.memory.build) {
+        const basicStructures = {
+            spawns:2,
+            extensions:50,
+            towers:3,
+            storage:1,
+            terminal:1,
+            lab:6,
+            container:1,
+            extractor:1,
+            factory:1
+        }
+
+        CheckStructures(room, basicStructures);
+    }
+}
+
+function RCL8RoomBuilder(room) {
+    if (!room.memory.build) {
+        const basicStructures = {
+            spawns:3,
+            extensions:60,
+            towers:6,
+            storage:1,
+            terminal:1,
+            lab:10,
+            container:1,
+            extractor:1,
+            factory:1,
+            powerSpawn:1,
+            nuker:1
+        }
+
+        CheckStructures(room, basicStructures);
+    }
 }
 
 /**
