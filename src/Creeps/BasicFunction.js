@@ -1,10 +1,13 @@
 // BasicFunctions start here
 
 /**
+ * Find hostile creeps in room
+ *
  * @param {Object} room
  * @param {string} target
+ * @param {Object} optional
  */
-function FindHostileCreeps(room, target) {
+function FindHostileCreeps(room, targetm optional) {
     if (target == "InRoom") {
         const hostileCreeps = room.find(FIND_HOSTILE_CREEPS, {
             filter: (creep) => {
@@ -15,9 +18,11 @@ function FindHostileCreeps(room, target) {
 }
 
 /**
+ * Return active source in room
+ *
  * @param {Creep} creep
  */
-function GetAllSource(creep) {
+function GetActiveSource(creep) {
     const info = Memory.Information[creep.room.name];
     const room = Game.rooms[info.roomName];
     const sources = room.find(FIND_SOURCES_ACTIVE);
@@ -25,7 +30,10 @@ function GetAllSource(creep) {
 }
 
 /**
+ * Set creep memory
+ *
  * @param {Creep} creep
+ * @return {int} 0 - need energy/minerals for work. 1 - need go work.
  */
 function setMemory(creep) {
     if (creep.store.getUsedCapacity()() === 0) creep.memory.mode = 0;
@@ -33,8 +41,16 @@ function setMemory(creep) {
 }
 
 /**
+ * Start upgrade controller
+ *
  * @param {Creep} creep
  */
-function harvesterWork(creep) {
-    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller)
+function DoUpgrade(creep) {    
+    const spawnEnergy = creep.room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType == STRUCTURE_EXTENSION ||
+                structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+        }
+    });
+    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, { heuristicWeight: 1.2 });
 }
