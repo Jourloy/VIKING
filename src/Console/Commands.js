@@ -1,8 +1,17 @@
 // Commands start here
 
-
+/**
+ * Change sign in all rooms
+ *
+ * @param {string} newSign
+ */
+global.ChangeSign = function(newSign) {
+    
+}
 
 /**
+ * Add player in friend list
+ *
  * @param {string} username
  */
 global.AddPlayerInFriend = function(username) {
@@ -15,6 +24,8 @@ global.AddPlayerInFriend = function(username) {
 }
 
 /**
+ * Delete player from friend list
+ *
  * @param {string} username
  */
 global.DeletePlayerFromFriend = function(username) {
@@ -26,6 +37,9 @@ global.DeletePlayerFromFriend = function(username) {
     return ``;
 }
 
+/**
+ * Delete all flags from map
+ */
 global.ClearFlags = function() {
     let count = 0;
     for (i in Game.flags) {
@@ -37,6 +51,9 @@ global.ClearFlags = function() {
     return ``
 }
 
+/**
+ * Delete all memory blocks
+ */
 global.ClearMemory = function() {
     let count = 0;
     for (let i in Memory) {
