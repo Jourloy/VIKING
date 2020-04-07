@@ -1,20 +1,17 @@
-/*
+/**
  *
  *
  * ____________________ Screeps AI ____________________
- * VIKING repository: https://github.com/Jourloy/VIKING
- * Author: JOURLOY
+ * @VIKING_repository: https://github.com/Jourloy/VIKING
+ * @Author: JOURLOY
  *
  *
  */
 
-// Don't change this. It is need for communicate
 const MY_USERNAME = 'JOURLOY';
 
-// Don't change this. It is need for communicate
 const YOUR_USERNAME = 'soon';
 
-// Don't change this. Use command ChangeSign('') in console for change this sign.
 const SIGN = 'VIKING';
 
 /**
@@ -32,10 +29,12 @@ function GenerateString(length) {
 }
 
 /**
+ * Return direction for defence
+ *
  * @param {?} direction
  * @return {?}
  */
-DefenceDirection(direction) {
+function DefenceDirection(direction) {
     switch (direction) {
         case TOP:
             return BOTTOM;
@@ -65,6 +64,7 @@ DefenceDirection(direction) {
 }
 
 /**
+ * Return priority of part
  *
  *  ------------------------------------------------------------------------------
  * | This code was given by Sergey on Screeps Slack. Thank you very much :)       |
@@ -102,13 +102,14 @@ function bodyPriority(body) {
 }
 
 /**
+ * Return creep's body part for spawn
  *
  *  ------------------------------------------------------------------------------
  * | This code was given by Sergey on Screeps Slack. Thank you very much :)       |
  *  ------------------------------------------------------------------------------
  * | Code corrected |
  *  ----------------
- *
+ * @Author Sergey
  * @param {Object} room
  * @param {List} pattern
  * @param {int} count
@@ -120,6 +121,7 @@ function bodyPriority(body) {
      const priority = {}; // Unused
      const skipCarry = optional.skipCarry || false; // Skip carry parts?
      const mustBe = optional.mustBe || []; // Important body parts. For example result will be [ATTACK, CARRY, CARRY, MOVE, MOVE] with pattern [CARRY]
+     const moveParts = optional.moveParts || true;
      if (moveBoost &&
          !_.includes([RESOURCE_ZYNTHIUM_OXIDE, RESOURCE_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE], moveBoost)) {
          logger.logWarning(MODULE_NAME, `Incorect parameter moveBoost: ${moveBoost}`);
@@ -148,7 +150,7 @@ function bodyPriority(body) {
                  if (availableEnergy < BODYPART_COST[b]) {
                      return false;
                  }
-                 body.push(MOVE);
+                 if (moveParts) body.push(MOVE);
              }
              moveIndex = (moveIndex + 1) % step;
          }
@@ -166,7 +168,7 @@ function bodyPriority(body) {
                  if (availableEnergy < BODYPART_COST[pattern[index]]) {
                      break;
                  }
-                 body.push(MOVE);
+                 if (moveParts) body.push(MOVE);
              }
              moveIndex = (moveIndex + 1) % step;
          }
@@ -181,6 +183,9 @@ function bodyPriority(body) {
      return body.sort((a, b) => (priority[b] || bodyPriority(b)) - (priority[a] || bodyPriority(a)));
  }
 
+/**
+ * Spawn creeps in all rooms
+ */
 function spawnCreep() {
     for (i in Game.rooms) {
         let room = Game.rooms[i];
