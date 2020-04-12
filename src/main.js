@@ -109,7 +109,7 @@ function bodyPriority(body) {
  *  ------------------------------------------------------------------------------
  * | Code corrected |
  *  ----------------
- * @Author Sergey
+ *
  * @param {Object} room
  * @param {List} pattern
  * @param {int} count
@@ -121,7 +121,7 @@ function bodyPriority(body) {
      const priority = {}; // Unused
      const skipCarry = optional.skipCarry || false; // Skip carry parts?
      const mustBe = optional.mustBe || []; // Important body parts. For example result will be [ATTACK, CARRY, CARRY, MOVE, MOVE] with pattern [CARRY]
-     const moveParts = optional.moveParts || true;
+     const moveParts = optional.moveParts || true; // Add MOVE in creep's dody?
      if (moveBoost &&
          !_.includes([RESOURCE_ZYNTHIUM_OXIDE, RESOURCE_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE], moveBoost)) {
          logger.logWarning(MODULE_NAME, `Incorect parameter moveBoost: ${moveBoost}`);
