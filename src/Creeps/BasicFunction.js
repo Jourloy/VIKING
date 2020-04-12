@@ -7,13 +7,25 @@
  * @param {string} target
  * @param {Object} optional
  */
-function FindHostileCreeps(room, targetm optional) {
-    if (target == "InRoom") {
+function FindHostileCreeps(room, target, optional) {
+    if (target == 'in room') {
         const hostileCreeps = room.find(FIND_HOSTILE_CREEPS, {
             filter: (creep) => {
                 return (!Memory.friends.includes(creep.owner.username));
             }
         });
+    }
+}
+
+/**
+ * Return object with information about room
+ *
+ * @param {string} roomName
+ * @return {Object}
+ */
+function GetRoomInformation(roomName) {
+    if (roomName) {
+        return Memory.Information[roomName]
     }
 }
 
@@ -45,12 +57,6 @@ function setMemory(creep) {
  *
  * @param {Creep} creep
  */
-function DoUpgrade(creep) {    
-    const spawnEnergy = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_EXTENSION ||
-                structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
-        }
-    });
+function DoUpgrade(creep) {
     if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, { heuristicWeight: 1.2 });
 }
