@@ -1,4 +1,4 @@
-const Harvester = {
+function Harvester = {
     /** @param {Creep} creep **/
     control(creep) {
         if (creep.spawning) {
