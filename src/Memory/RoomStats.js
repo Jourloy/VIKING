@@ -64,6 +64,9 @@ function checkStorage(room, target) {
 * @param {string} target
 */
 function checkRoom(room, target) {
+    let info = null;
+    let owners = [];
+
     if(target == "EnergyBalance") {
         if (room.storage) {
             if (room.terminal) {
@@ -80,8 +83,25 @@ function checkRoom(room, target) {
                 return (!Memory.Friends.includes(creep.owner.username));
             }
         });
-        if (HostileCreeps.length > 0) return true;
-        else return false;
+
+        if (HostileCreeps.length > 0) {
+            for (i in HostileCreeps) {
+                if (!owners.includes(HostileCreeps[i].owner.username)) owners.push(HostileCreeps[i].owner.username);
+            }
+            info = {
+                HostileState:true,
+                Amount:HostileCreeps.length,
+                Owners:owners,
+            }
+        } else {
+            info = {
+                HostileState:null,
+                Amount:null,
+                Owners:null,
+            }
+        }
+
+        return info;
     } else if(target == "EnergySources") {
         const sources = room.find(FIND_SOURCES);
         return sources.length;
@@ -152,7 +172,7 @@ function RoomStats() {
         Info = {
             RoomName:room.name,
             EnergyBalance:checkRoom(room, "EnergyBalance"),
-            HostileCreeps:checkRoom(room, "HostileCreeps"),
+            HostileCreeps:checkRoom(room, "HostileCreeps"), // bool
             EnergySources:checkRoom(room, "EnergySources"),
             FirstSource:checkRoom(room, "Source1"),
             SecondSource:checkRoom(room, "Source2"),
