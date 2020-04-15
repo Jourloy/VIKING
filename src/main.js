@@ -8,12 +8,6 @@
  *
  */
 
-const MY_USERNAME = 'JOURLOY';
-
-const YOUR_USERNAME = 'soon';
-
-const SIGN = 'VIKING';
-
 /**
  * @param {int} length
  * @return {string}
@@ -31,8 +25,8 @@ function GenerateString(length) {
 /**
  * Return direction for defence
  *
- * @param {?} direction
- * @return {?}
+ * @param {DIRECTION} direction
+ * @return {DIRECTION}
  */
 function DefenceDirection(direction) {
     switch (direction) {
@@ -195,6 +189,15 @@ function spawnCreep() {
         }
         console.log(getBodyParts(room, [WORK, CARRY], 12, opt))
     }
+}
+
+const INFORMAION = {
+    MY_USERNAME:'JOURLOY',
+    YOUR_USERNAME:'soon',
+    ROOM_SIGN:'VIKING',
+    RESERVED_SIGN:'Reserved by VIKING',
+    ATTACKED_SIGN:'Attacked by VIKING',
+    CONTROL_SIGN:'Controlled by VIKING'
 }
 
 // 20 20
