@@ -1,37 +1,34 @@
 // SetMemory start here
 
 function SetMemory() {
-    Friends();
-    BasicFolders()
+    BasicBlocks()
+
+    for (let name in Memory.creeps) {
+        if (!Game.creeps[name]) {
+            delete Memory.creeps[name];
+        }
+    }
 }
 
-function BasicFolders() {
+function BasicBlocks() {
     if (!Memory.Information) Memory.Information = {};
     else Memory.Information = Memory.Information;
 
     if (!Memory.RoomsState) Memory.RoomsState = {};
     else Memory.RoomsState = Memory.RoomsState;
 
-    if (!Memory.SpawnFlags) Memory.SpawnFlags = {};
-    else Memory.SpawnFlags = Memory.SpawnFlags;
-}
-
-function Friends() {
     if (!Memory.Friends) Memory.Friends = [];
     else Memory.Friends = Memory.Friends;
+
+    if (!Memory.BannedResources) Memory.BannedResources = [];
+    else Memory.BannedResources = Memory.BannedResources;
 }
 
-/**
-* @param {string} param1 Name of room
-* @param {string} param2 Name of flag
-* @param {string} part
-*/
-function AddInMemory(param1, param2, part) {
-    if (part == 'SpawnFlags') {
-        if (!Memory.SpawnFlags[param1]) {
-            Memory.SpawnFlags[param1] = {flagName:param2}
-        }
+function BasicParametersForRoom() {
+    Memory.BasicParametersForRoom = {
+        ENERGY_IN_STORAGE:100000,
+        ENERGY_IN_TERMINAL:20000,
+        FREE_CAPACITY_IN_TERMINAL:10000,
+        BUNKER:true,
     }
-
-    logging(`In [${part}] added [${param1}] and [${param2}]`);
 }
