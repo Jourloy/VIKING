@@ -23,10 +23,10 @@ function Miner(creep) {
             }
         } else {
             if (containerNear.length == 2 && creep.pos.isNearTo(source)) {
-                creep.moveTo(containerNear[1], { ignoreCreeps:true, reusePath: 50 });
-            } else creep.moveTo(source, { ignoreCreeps:true, reusePath: 50 });
+                creep.moveTo(containerNear[1], { ignoreCreeps: true, reusePath: 50 });
+            } else creep.moveTo(source, { ignoreCreeps: true, reusePath: 50 });
         }
     } else {
-        Error(`Error 001`);
+        Error(`Creep can't choose source. Error [MINER:30]`);
     }
 }

@@ -1,5 +1,5 @@
 const creepInfo = {
-    'harvester': {
+    'Harvester': {
         role:'harvester',
         pattern:[WORK,CARRY],
         count:25,
@@ -8,7 +8,7 @@ const creepInfo = {
         useBoost:false,
         moveParts:true
     },
-    'miner': {
+    'Miner': {
         role:'miner',
         pattern:[WORK],
         count:5,
@@ -17,7 +17,7 @@ const creepInfo = {
         useBoost:false,
         moveParts:true
     },
-    'manager': {
+    'Manager': {
         role:'manager',
         pattern:[CARRY],
         count:5,
@@ -26,7 +26,7 @@ const creepInfo = {
         useBoost:false,
         moveParts:false
     },
-    'upgrader': {
+    'Upgrader': {
         RoomLevel: {
             To_8: {
                 role:'upgrader',
@@ -89,6 +89,9 @@ function CalculateAmountOfCreeps(roomInfo, role) {
     }
 }
 
+/**
+ * Setting amount of creeps in all rooms
+ */
 function AmountCreeps() {
 
     let basicAmountCreeps;
@@ -109,10 +112,10 @@ function AmountCreeps() {
 
         if (room.controller && room.controller.my) {
             basicAmountCreeps = {
-                'miner':CalculateAmountOfCreeps(information, 'Miner'),
-                'upgrader':CalculateAmountOfCreeps(information, 'Upgrader'),
-                'builder':CalculateAmountOfCreeps(information, 'Builder')
-                'mineralMiner':CalculateAmountOfCreeps(information, 'MineralMiner'),
+                'Miner':CalculateAmountOfCreeps(information, 'Miner'),
+                'Upgrader':CalculateAmountOfCreeps(information, 'Upgrader'),
+                'Builder':CalculateAmountOfCreeps(information, 'Builder')
+                'MineralMiner':CalculateAmountOfCreeps(information, 'MineralMiner'),
             }
         }
 }
