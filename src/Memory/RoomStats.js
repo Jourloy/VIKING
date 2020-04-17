@@ -129,6 +129,14 @@ function checkRoom(room, target) {
         const spawns = room.find(FIND_MY_SPAWNS);
         if (spawns[2]) return spawns[2].id;
         else return null;
+    } else if (target == 'Extractor') {
+        const extractor = room.find(FIND_STRUCTURES, {
+            filter: (strc) => {
+                return strc.type == 'extractor';
+            }
+        });
+        if (extractor.length > 0) return true;
+        else return false;
     }
 }
 
@@ -171,39 +179,53 @@ function RoomStats() {
 
         Info = {
             RoomName:room.name,
-            EnergyBalance:checkRoom(room, "EnergyBalance"),
-            HostileCreeps:checkRoom(room, "HostileCreeps"), // bool
-            EnergySources:checkRoom(room, "EnergySources"),
-            FirstSource:checkRoom(room, "Source1"),
-            SecondSource:checkRoom(room, "Source2"),
-            Spawn1:checkRoom(room, "Spawn1"),
-            Spawn2:checkRoom(room, "Spawn2"),
-            Spawn3:checkRoom(room, "Spawn3"),
-            RoomMineral:checkRoom(room, "RoomMineral"),
-            Nukes:checkRoom(room, "Nuke"),
-            Controller:{
-                ControllerState:CheckController(room, "State"),
-                ControllerIsMy:CheckController(room, "IsMy"),
-                ControllerReserved:CheckController(room, "Reserved"),
-                ControllerLevel:CheckController(room, "Level"),
-                ControllerProgress:CheckController(room, "Progress"),
-                ControllerDowngrade:CheckController(room, "Downgrade"),
-                ControllerSign:CheckController(room, "Sign"),
-                ControllerSafeMode:CheckController(room, "SafeMode"),
-                ControllerSafeModeAvailable:CheckController(room, "SafeModeAvailable"),
-                ControllerSafeModeCooldown:CheckController(room, "SafeModeCooldown"),
-            },
-            Terminal:{
-                TerminalState:checkTerminal(room, "State"),
-                TerminalCapacityUsed:checkTerminal(room, "CapacityUsed"),
-                TerminalCapacityFree:checkTerminal(room, "CapacityFree"),
-                TerminalCapacityEnergy:checkTerminal(room, "CapacityEnergy"),
-            },
-            Storage:{
-                StorageState:checkStorage(room, "State"),
-                StorageCapacityUsed:checkStorage(room, "CapacityUsed"),
-                StorageCapacityFree:checkStorage(room, "CapacityFree"),
-                StorageCapacityEnergy:checkStorage(room, "CapacityEnergy"),
+            Room:{
+                EnergyBalance:checkRoom(room, "EnergyBalance"),
+                HostileCreeps:checkRoom(room, "HostileCreeps"), // bool
+                Sources:{
+                    Amount:checkRoom(room, "EnergySources"),
+                    FirstSource:checkRoom(room, "Source1"),
+                    SecondSource:checkRoom(room, "Source2"),
+                },
+                Spawns:{
+                    Amount:checkRoom(room, "Spawns:Amount"),
+                    Spawn1:checkRoom(room, "Spawn1"),
+                    Spawn2:checkRoom(room, "Spawn2"),
+                    Spawn3:checkRoom(room, "Spawn3"),
+                },
+                Mineral:{
+                    RoomMineral:checkRoom(room, "RoomMineral"),
+                    Extractor:checkRoom(room, "Extractor"),
+                },
+                ConstructionSites:{
+                    Amount:checkRoom(room, "ConstructionSites:Amount"),
+                    List:checkRoom(room, "ConstructionSites:List"),
+                },
+                Nukes:checkRoom(room, "Nuke"),
+                Controller:{
+                    ControllerState:CheckController(room, "State"),
+                    ControllerIsMy:CheckController(room, "IsMy"),
+                    ControllerReserved:CheckController(room, "Reserved"),
+                    ControllerLevel:CheckController(room, "Level"),
+                    ControllerProgress:CheckController(room, "Progress"),
+                    ControllerDowngrade:CheckController(room, "Downgrade"),
+                    ControllerSign:CheckController(room, "Sign"),
+                    ControllerSafeMode:CheckController(room, "SafeMode"),
+                    ControllerSafeModeAvailable:CheckController(room, "SafeModeAvailable"),
+                    ControllerSafeModeCooldown:CheckController(room, "SafeModeCooldown"),
+                },
+                Terminal:{
+                    TerminalState:checkTerminal(room, "State"),
+                    TerminalCapacityUsed:checkTerminal(room, "CapacityUsed"),
+                    TerminalCapacityFree:checkTerminal(room, "CapacityFree"),
+                    TerminalCapacityEnergy:checkTerminal(room, "CapacityEnergy"),
+                },
+                Storage:{
+                    StorageState:checkStorage(room, "State"),
+                    StorageCapacityUsed:checkStorage(room, "CapacityUsed"),
+                    StorageCapacityFree:checkStorage(room, "CapacityFree"),
+                    StorageCapacityEnergy:checkStorage(room, "CapacityEnergy"),
+                },
             },
         }
 
