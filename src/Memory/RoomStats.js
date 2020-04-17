@@ -115,6 +115,9 @@ function checkRoom(room, target) {
     } else if(target == "RoomMineral") {
         const source = room.find(FIND_MINERALS);
         return source[0].id;
+    } else if(target == "MineralRegeneration") {
+        const source = room.find(FIND_MINERALS);
+        return source[0].ticksToRegeneration;
     } else if(target == "Nuke") {
         return false;
     } else if (target == "Spawn1") {
@@ -196,6 +199,7 @@ function RoomStats() {
                 Mineral:{
                     RoomMineral:checkRoom(room, "RoomMineral"),
                     Extractor:checkRoom(room, "Extractor"),
+                    MineralRegeneration:checkRoom(room, "RoomMineral"),
                 },
                 ConstructionSites:{
                     Amount:checkRoom(room, "ConstructionSites:Amount"),
