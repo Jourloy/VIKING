@@ -2,6 +2,6 @@
 .DS_Store
 Gruntfile.js
 node_modules
-*.json
+package-lock.json
 ScreepsAutocomplete
 .tern-project
