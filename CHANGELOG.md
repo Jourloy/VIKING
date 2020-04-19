@@ -13,5 +13,5 @@
 - Version for project
 - Tactic file for war code
 
-### Изменено
+### Changed
 - Constants for autobuilder moved from main.js to Autobuilder.js
