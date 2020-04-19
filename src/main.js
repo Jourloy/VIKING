@@ -4,7 +4,6 @@
  * ____________________ Screeps AI ____________________
  * @VIKING_repository: https://github.com/Jourloy/VIKING
  * @author: JOURLOY
- * @version 0.1.3
  *
  */
 
@@ -183,11 +182,6 @@ function bodyPriority(body) {
 function spawnCreep() {
     for (i in Game.rooms) {
         let room = Game.rooms[i];
-
-        let opt = {
-            isForRoad: true,
-        }
-        console.log(getBodyParts(room, [WORK, CARRY], 12, opt))
     }
 }
 
@@ -203,9 +197,12 @@ const INFORMAION = {
 module.exports.loop = function () {
     SetMemory();
     RoomStats();
-    spawnCreep();
+    AmountCreeps();
+    RunCreep();
+    CalculateCreeps();
+    //spawnCreep();
 
-    for(i in Game.rooms) {
-        if (!Memory.RoomsState[Game.rooms[i].name]) CalculateRoom(Game.rooms[i].name);
+    for (i in Game.rooms) {
+        if (Game.rooms[i].controller && Game.rooms[i].controller.my) Autobuild(Game.rooms[i]);
     }
 };

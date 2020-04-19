@@ -1,6 +1,7 @@
 // Autobuilder start here
 
-// 20 20
+const x = 20; // Will change
+const y = 20; // Will change
 const RCL2 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+4,"y":y+1}]}}
 const RCL3 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2},{"x":x+4,"y":y+1},{"x":x+4,"y":y},{"x":x+4,"y":y-1},{"x":x+3,"y":y},{"x":x+3,"y":y-1}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+3,"y":y+1},{"x":x+4,"y":y+2},{"x":x+2,"y":y-1},{"x":x+3,"y":y-2},{"x":x+4,"y":y-2}]},"tower":{"pos":[{"x":x+5,"y":y+3}]}};
 
@@ -40,6 +41,7 @@ function CheckStructures(room, basicStructures) {
         else terminalState = true;
     } else terminalState = true;
 }
+
 /**
  * @param {Object} room
  */
@@ -152,7 +154,7 @@ function RCL8RoomBuilder(room) {
  */
 function Autobuild(room) {
     switch(room.controller.level) {
-        switch 2:
+        case 2:
             if (Game.time%21===20) RCL2RoomBuilder(room)
             break;
     }

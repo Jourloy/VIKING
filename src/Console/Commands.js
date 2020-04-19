@@ -1,12 +1,27 @@
 // Commands start here
 
 /**
+ * Print information about commands
+ */
+global.help = function() {
+    let info = [];
+    info.push(`* ChangeSugn('') - Change sign in all rooms`);
+    info.push(`* AddPlayerInFriend('') - Add nickname in friend list`);
+    info.push(`* DeletePlayerFromFriend('') - Delete nickname from friend list`);
+    info.push(`* [WARNING] ClearFlags() - Remove all flags`);
+    info.push(`* [WARNING] ClearMemory() - Remove all memory block from game memory`);
+    info = info.join("\n");
+
+    return info;
+}
+
+/**
  * Change sign in all rooms
  *
  * @param {string} newSign
  */
 global.ChangeSign = function(newSign) {
-    
+
 }
 
 /**
@@ -47,7 +62,7 @@ global.ClearFlags = function() {
         flag.remove();
         count++;
     }
-    logging.warning()(`Removed ${count} flags`)
+    warning()(`Removed ${count} flags`)
     return ``
 }
 
@@ -60,6 +75,6 @@ global.ClearMemory = function() {
         delete Memory[i];
         count++;
     }
-    logging.warning(`Cleared ${count} memory blocks`);
+    warning(`Cleared ${count} memory blocks`);
     return ``
 }

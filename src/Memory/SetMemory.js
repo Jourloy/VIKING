@@ -11,6 +11,8 @@ function SetMemory() {
 }
 
 function BasicBlocks() {
+    Memory.room = {};
+
     if (!Memory.Information) Memory.Information = {};
     else Memory.Information = Memory.Information;
 
@@ -22,6 +24,16 @@ function BasicBlocks() {
 
     if (!Memory.BannedResources) Memory.BannedResources = [];
     else Memory.BannedResources = Memory.BannedResources;
+
+    Memory.roles = [
+        "Refiller",
+        "Builder",
+        "Miner",
+        "MineralMiner",
+        "Seller",
+        "Upgrader",
+        "Repairer"
+    ];
 }
 
 function BasicParametersForRoom() {

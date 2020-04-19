@@ -95,7 +95,7 @@ function checkRoom(room, target) {
             }
         } else {
             info = {
-                HostileState:null,
+                HostileState:false,
                 Amount:null,
                 Owners:null,
             }
@@ -111,7 +111,7 @@ function checkRoom(room, target) {
     } else if(target == "Source2") {
         const sources = room.find(FIND_SOURCES);
         if (sources[1]) return sources[1].id;
-        else return null;
+        else return false;
     } else if(target == "RoomMineral") {
         const source = room.find(FIND_MINERALS);
         return source[0].id;
@@ -199,7 +199,7 @@ function RoomStats() {
                 Mineral:{
                     RoomMineral:checkRoom(room, "RoomMineral"),
                     Extractor:checkRoom(room, "Extractor"),
-                    MineralRegeneration:checkRoom(room, "RoomMineral"),
+                    MineralRegeneration:checkRoom(room, "MineralRegeneration"),
                 },
                 ConstructionSites:{
                     Amount:checkRoom(room, "ConstructionSites:Amount"),

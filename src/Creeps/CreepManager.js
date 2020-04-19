@@ -1,6 +1,6 @@
 const creepInfo = {
     'Harvester': {
-        role:'harvester',
+        role:'Harvester',
         pattern:[WORK,CARRY],
         count:25,
         mustBe:[],
@@ -9,22 +9,22 @@ const creepInfo = {
         moveParts:true
     },
     'Miner': {
-        role:'miner',
+        role:'Miner',
         pattern:[WORK],
         count:5,
         mustBe:[CARRY],
         isForRoad:false,
         useBoost:false,
-        moveParts:true
+        moveParts:false
     },
     'Manager': {
-        role:'manager',
+        role:'Manager',
         pattern:[CARRY],
         count:5,
         mustBe:[],
         isForRoad:false,
         useBoost:false,
-        moveParts:false
+        moveParts:true
     },
     'Upgrader': {
         RoomLevel: {
@@ -35,7 +35,7 @@ const creepInfo = {
                 mustBe:[],
                 isForRoad:true,
                 useBoost:false,
-                moveParts:false
+                moveParts:true
             },
             From_8: {
                 role:'upgrader',
@@ -44,9 +44,27 @@ const creepInfo = {
                 mustBe:[],
                 isForRoad:true,
                 useBoost:false,
-                moveParts:false
+                moveParts:true
             },
         }
+    },
+    'MineralMiner': {
+        role:'MineralMiner',
+        pattern:[WORK],
+        count:null,
+        mustBe:[CARRY],
+        isForRoad:false,
+        useBoost:false,
+        moveParts:false
+    },
+    'Repairer': {
+        role:'Repairer',
+        pattern:[WORK, CARRY],
+        count:null,
+        mustBe:[],
+        isForRoad:true,
+        useBoost:false,
+        moveParts:true
     },
 }
 
@@ -73,7 +91,7 @@ function CalculateAmountOfCreeps(roomInfo, role) {
     if (role == 'Miner') {
         return roomInfo.Room.Sources.Amount;
     } else if (role == 'Upgrader') {
-        let amount = 0;
+        let amount = 1;
         // TODO
         return amount;
     } else if (role == 'Builder') {
@@ -94,8 +112,6 @@ function CalculateAmountOfCreeps(roomInfo, role) {
  */
 function AmountCreeps() {
 
-    let basicAmountCreeps;
-
     /** Set 0 for all roles */
     for (let z in Game.rooms) {
         let room = Game.rooms[z];
@@ -106,16 +122,58 @@ function AmountCreeps() {
         }
     }
 
+    /** Set amount roles for all rooms */
     for (let z in Game.rooms) {
         const room = Game.rooms[z];
         const information = GetRoomInformation(room.name);
 
         if (room.controller && room.controller.my) {
-            basicAmountCreeps = {
-                'Miner':CalculateAmountOfCreeps(information, 'Miner'),
-                'Upgrader':CalculateAmountOfCreeps(information, 'Upgrader'),
-                'Builder':CalculateAmountOfCreeps(information, 'Builder')
-                'MineralMiner':CalculateAmountOfCreeps(information, 'MineralMiner'),
+
+            Memory.room[room.name + '.amount.Miner'] = CalculateAmountOfCreeps(information, 'Miner');
+            Memory.room[room.name + '.amount.Upgrader'] = CalculateAmountOfCreeps(information, 'Upgrader');
+            Memory.room[room.name + '.amount.Builder'] = CalculateAmountOfCreeps(information, 'Builder');
+            Memory.room[room.name + '.amount.MineralMiner'] = CalculateAmountOfCreeps(information, 'MineralMiner');
+
+        }
+    }
+}
+
+/**
+ *  ------------------------------------------------------------------------------
+ * | This code was given by Sergey on Screeps Slack. Thank you very much :)       |
+ *  ------------------------------------------------------------------------------
+ * | Code corrected |
+ *  ----------------
+ *
+ * Run code for all creeps
+ */
+function RunCreep() {
+    let droneTask = null;
+    for (let i in Game.creeps) {
+        let creep = Game.creeps[i];
+        //droneTask = require(creep.memory.role);
+        //if (droneTask) droneTask.control(creep);
+        //else console.log(`Invalid creep role ${creep.memory.role}`);
+    }
+}
+
+/**
+ * Find creeps and create queue
+ */
+function CalculateCreeps() {
+    if (Game.time % 2 == 1) {
+        Memory.queue = [];
+        for (i in Memory.roles) {
+            for (z in Game.rooms) {
+                if (Game.rooms[z].controller && Game.rooms[z].controller.my) {
+                    let roomName = Game.rooms[z].name;
+                    let role = Memory.roles[i];
+                    let room = Game.rooms[z];
+                    if ((!Memory.room[room.name + ".amountIsLive." + Memory.roles[i]] && Memory.room[room.name + ".amount." + Memory.roles[i]] > 0) || (Memory.room[room.name + ".amountIsLive." + Memory.roles[i]] < Memory.room[room.name + ".amount." + Memory.roles[i]])) {
+                        Memory.queue.push({ Role: role, Room: roomName });
+                    }
+                }
             }
         }
+    }
 }
