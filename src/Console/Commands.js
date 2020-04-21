@@ -5,7 +5,6 @@
  */
 global.help = function() {
     let info = [];
-    info.push(`* ChangeSugn('') - Change sign in all rooms`);
     info.push(`* AddPlayerInFriend('') - Add nickname in friend list`);
     info.push(`* DeletePlayerFromFriend('') - Delete nickname from friend list`);
     info.push(`* [WARNING] ClearFlags() - Remove all flags`);
@@ -13,15 +12,6 @@ global.help = function() {
     info = info.join("\n");
 
     return info;
-}
-
-/**
- * Change sign in all rooms
- *
- * @param {string} newSign
- */
-global.ChangeSign = function(newSign) {
-
 }
 
 /**

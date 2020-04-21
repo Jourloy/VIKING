@@ -1,3 +1,52 @@
+## VIKING [0.2.0]
+
+### Добавлено
+- Harvester.js:
+    - Фукнция добычи энергии и работы
+    - Установление режима в память крипа
+- SetMemory.js:
+    - Роль Harvester
+
+### Изменено
+- Commands.js:
+    - Убрана команда изменения sign в комнате
+- CreepManager.js:
+    - Изменено в соответствии с новым блоком памяти
+- Harvester.js:
+    - Информация о крипе перенесена в его файл
+- Miner.js:
+    - Информация о крипе перенесена в его файл
+- RoomStats.js:
+    - Создано новая ветка построения памяти
+
+### Исправлено
+- BasicFunctions.js:
+    - Функция получения активного источника
+---
+
+### Added
+- Harvester.js:
+    - Function get energy and work
+    - Set mode in creep's memory
+- SetMemory.js:
+    - Harvester role
+
+### Changed
+- Commands.js:
+    - Removed command for change sign in rooms
+- CreepManager.js:
+    - Changed for new memory block
+- Harvester.js:
+    - Information about creep moved in creep's file
+- Miner.js:
+    - Information about creep moved in creep's file
+- RoomStats.js:
+    - Created new branch for build memory
+
+### Fixed
+- BasicFunctions.js:
+    - Function for get active source
+
 ## VIKING [0.1.20]
 
 ### Добавлено

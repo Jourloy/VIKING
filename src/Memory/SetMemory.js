@@ -32,7 +32,8 @@ function BasicBlocks() {
         "MineralMiner",
         "Seller",
         "Upgrader",
-        "Repairer"
+        "Repairer",
+        "Harvester"
     ];
 }
 

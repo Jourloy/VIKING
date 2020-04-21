@@ -1,3 +1,13 @@
+const MinerInfo = {
+    role:'Miner',
+    pattern:[WORK],
+    count:5,
+    mustBe:[CARRY],
+    isForRoad:false,
+    useBoost:false,
+    moveParts:false
+}
+
 /**
  * @param {Creep} creep
  */

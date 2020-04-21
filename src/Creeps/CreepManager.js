@@ -1,22 +1,4 @@
 const creepInfo = {
-    'Harvester': {
-        role:'Harvester',
-        pattern:[WORK,CARRY],
-        count:25,
-        mustBe:[],
-        isForRoad:false,
-        useBoost:false,
-        moveParts:true
-    },
-    'Miner': {
-        role:'Miner',
-        pattern:[WORK],
-        count:5,
-        mustBe:[CARRY],
-        isForRoad:false,
-        useBoost:false,
-        moveParts:false
-    },
     'Manager': {
         role:'Manager',
         pattern:[CARRY],
@@ -95,13 +77,13 @@ function CalculateAmountOfCreeps(roomInfo, role) {
         // TODO
         return amount;
     } else if (role == 'Builder') {
-        let constructionSites = roomInfo.Room.ConstructionSites.Amount;
+        let constructionSites = roomInfo.Room.Other.ConstructionSites.Amount;
         if (constructionSites == 0) return 0;
         else if (constructionSites > 0 && constructionSites < 5) return 1;
         else if (constructionSites >= 5) return 2;
     } else if (role == 'MineralMiner') {
-        const mineralRegeneration = roomInfo.Room.Mineral.MineralRegeneration;
-        const extractor = roomInfo.Room.Mineral.Extractor;
+        const mineralRegeneration = roomInfo.Room.Minerals.MineralRegeneration;
+        const extractor = roomInfo.Room.Minerals.Extractor;
         if (mineralRegeneration < 20 && extractor.length > 0) return 1;
         else return 0;
     }
