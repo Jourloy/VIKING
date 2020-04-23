@@ -1,4 +1,5 @@
 const creepInfo = {
+    'Harvester': HarvesterInfo,
     'Manager': {
         role:'Manager',
         pattern:[CARRY],
@@ -50,6 +51,19 @@ const creepInfo = {
     },
 }
 
+const startCreep = {
+    'Harvester': harvester,
+}
+
+function StartCreepCode() {
+    for (i in Game.creeps) {
+        let role = Game.creeps[i].memory.role;
+        let creep = Game.creeps[i]
+
+        if (startCreep[role]) startCreep[role].control(creep);
+    }
+}
+
 /**
  * Return information about creep
  *
@@ -71,20 +85,27 @@ function getCreepInfo(role) {
  */
 function CalculateAmountOfCreeps(roomInfo, role) {
     if (role == 'Miner') {
-        return roomInfo.Room.Sources.Amount;
+        if (roomInfo.Room.Controller.Level > 1) return roomInfo.Room.Sources.Amount;
+        else return 0;
     } else if (role == 'Upgrader') {
-        let amount = 1;
-        // TODO
-        return amount;
+        if (roomInfo.Room.Controller.Level > 1) return 1;
+        else return 0;
     } else if (role == 'Builder') {
-        let constructionSites = roomInfo.Room.Other.ConstructionSites.Amount;
-        if (constructionSites == 0) return 0;
-        else if (constructionSites > 0 && constructionSites < 5) return 1;
-        else if (constructionSites >= 5) return 2;
+        if (roomInfo.Room.Controller.Level > 1) {
+            let constructionSites = roomInfo.Room.Other.ConstructionSites.Amount;
+            if (constructionSites == 0) return 0;
+            else if (constructionSites > 0 && constructionSites < 5) return 1;
+            else if (constructionSites >= 5) return 2;
+        } else return 0;
     } else if (role == 'MineralMiner') {
-        const mineralRegeneration = roomInfo.Room.Minerals.MineralRegeneration;
-        const extractor = roomInfo.Room.Minerals.Extractor;
-        if (mineralRegeneration < 20 && extractor.length > 0) return 1;
+        if (roomInfo.Room.Controller.Level > 1) {
+            const mineralRegeneration = roomInfo.Room.Minerals.MineralRegeneration;
+            const extractor = roomInfo.Room.Minerals.Extractor;
+            if (mineralRegeneration < 20 && extractor.length > 0) return 1;
+            else return 0;
+        } else return 0;
+    } else if (role == 'Harvester') {
+        if (roomInfo.Room.Controller.Level == 1) return 5;
         else return 0;
     }
 }
@@ -111,6 +132,7 @@ function AmountCreeps() {
 
         if (room.controller && room.controller.my) {
 
+            Memory.room[room.name + '.amount.Harvester'] = CalculateAmountOfCreeps(information, 'Harvester');
             Memory.room[room.name + '.amount.Miner'] = CalculateAmountOfCreeps(information, 'Miner');
             Memory.room[room.name + '.amount.Upgrader'] = CalculateAmountOfCreeps(information, 'Upgrader');
             Memory.room[room.name + '.amount.Builder'] = CalculateAmountOfCreeps(information, 'Builder');
@@ -121,21 +143,37 @@ function AmountCreeps() {
 }
 
 /**
- *  ------------------------------------------------------------------------------
- * | This code was given by Sergey on Screeps Slack. Thank you very much :)       |
- *  ------------------------------------------------------------------------------
- * | Code corrected |
- *  ----------------
- *
- * Run code for all creeps
+ * Get amount live creeps
  */
-function RunCreep() {
-    let droneTask = null;
-    for (let i in Game.creeps) {
-        let creep = Game.creeps[i];
-        //droneTask = require(creep.memory.role);
-        //if (droneTask) droneTask.control(creep);
-        //else console.log(`Invalid creep role ${creep.memory.role}`);
+function amountCreepsIsLive() {
+    for (let z in Game.rooms) {
+        let room = Game.rooms[z];
+        if (room.controller && room.controller.my) {
+            for (let i in Memory.roles) {
+                Memory.room[room.name + ".amountIsLive." + Memory.roles[i]] = 0
+            }
+        }
+    }
+
+    for (let z in Game.rooms) {
+        let room = Game.rooms[z];
+        if (room.controller && room.controller.my) {
+            for (let i in Game.creeps) {
+                let creep = Game.creeps[i];
+                if (room.name == creep.memory.room) Memory.room[room.name + ".amountIsLive." + creep.memory.role]++;
+            }
+            spawns = room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_SPAWN);
+                }
+            });
+
+            for (i in spawns) {
+                if (spawns[i].spawning != null && spawns[i].spawning.remainingTime > spawns[i].spawning.needTime - 10) {
+                    Memory.room[room.name + ".amountIsLive." + spawns[i].memory.spawningCreep]++;
+                }
+            }
+        }
     }
 }
 
@@ -158,4 +196,12 @@ function CalculateCreeps() {
             }
         }
     }
+}
+
+function CreepManager() {
+    CalculateAmountOfCreeps();
+    AmountCreeps();
+    amountCreepsIsLive();
+    CalculateCreeps();
+    StartCreepCode();
 }

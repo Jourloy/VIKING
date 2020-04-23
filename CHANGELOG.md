@@ -1,11 +1,76 @@
+## VIKING [0.2.44] - Rise of VIKINKGS
+
+### Добавлено
+- CreepManager.js:
+    - Добавлена фукнция подсчета живых крипов
+- Добавлен файл info.js с описанием кода
+- main.js:
+    - Добавлена функция выбора spawn для создания крипа
+    - Добавлена функция создания крипа
+
+### Изменено
+- BasicFunctions.js:
+    - Убрана функция установления режима работы для крипов
+    - Активный источник подается в виде id
+- CreepManager.js:
+    - Убрана ненужна функция для запуска кода крипов
+    - Добавлена функция для запуска кода крипа
+    - Добавлена ссылка на параметры крипа
+- Harvester.js:
+    - Добавлена фукнция работы (скоро будет изменена)
+    - Установление памяти перенесено в основной блок
+- Main.js:
+    - Убрано описание кода
+
+### Исправлено
+- CreepManager.js:
+    - Исправлен подсчет количества необходимых крипов в комнате
+- Harvester.js:
+    - Исправлена переменная с параметрами крипа
+    - Исрпавлена функция добычи ресурсов
+- Main.js:
+    - Исправлен запуск некоторых функций
+---
+
+### Added
+- CreepManager.js:
+    - Added function for calculate live creeps
+- Added file info.js with code description
+- main.js:
+    - Added function for choose spawn for create creep
+    - Added function for create creep
+
+### Changed
+- BasicFunctions.js:
+    - Removed function for set creep mode
+    - Active source give as id
+- CreepManager.js:
+    - Removed unused function for start creep code
+    - Added function for start creep code
+    - Added link on creep parameters
+- Harvester.js:
+    - Added work function (soon change)
+    - Setting memory moved in main block
+- Main.js:
+    - Removed code description
+
+### Fixed
+- CreepManager.js:
+    - Fixed calculate amount if need creeps for room
+- Harvester.js:
+    - Fixed creep parameters
+    - Fixed function for get resource
+- Main.js:
+    - Fixed start some functions
+
 ## VIKING [0.2.0]
 
 ### Добавлено
 - Harvester.js:
-    - Фукнция добычи энергии и работы
-    - Установление режима в память крипа
+    - Добавлена фукнция добычи энергии и работы
+    - Добавлено установление режима в память крипа
 - SetMemory.js:
-    - Роль Harvester
+    - Добавлена роль Harvester
 
 ### Изменено
 - Commands.js:
@@ -21,15 +86,15 @@
 
 ### Исправлено
 - BasicFunctions.js:
-    - Функция получения активного источника
+    - Исправлена функция получения активного источника
 ---
 
 ### Added
 - Harvester.js:
-    - Function get energy and work
-    - Set mode in creep's memory
+    - Added function get energy and work
+    - Added set mode in creep's memory
 - SetMemory.js:
-    - Harvester role
+    - Added harvester role
 
 ### Changed
 - Commands.js:
@@ -45,18 +110,18 @@
 
 ### Fixed
 - BasicFunctions.js:
-    - Function for get active source
+    - Fixed function for get active source
 
 ## VIKING [0.1.20]
 
 ### Добавлено
 - Commands.js:
-    - Команда help()
+    - Добавлена команда help()
 - CreepManager.js:
-    - Функция подсчета живых существ
-    - Функция запуска кода для каждой роли
-    - Новые роли
-- Файл Visual.js
+    - Добавлена функция подсчета живых существ
+    - Добавлена функция запуска кода для каждой роли
+    - Добавлены новые роли
+- Добавлен файл Visual.js
 
 ### Изменено
 - CreepManager.js:
@@ -64,26 +129,26 @@
 
 ### Исправлено
 - Commands.js:
-    - Команда ClearMemory()
-    - Команда ClearFlags()
+    - Исправлена команда ClearMemory()
+    - Исправлена команда ClearFlags()
 - CreepManager.js:
-    - Установка количества необходимых крипов для комнат
+    - Исправлена установка количества необходимых крипов для комнат
 - main.js:
-    - Запуск основных функций
+    - Исправлен запуск основных функций
 - RoomStats.js:
-    - Некорректное отображение некоторых параметров
+    - Исправлено некорректное отображение некоторых параметров
 - Autobuilder.js:
     - Незначительные исправление
 ---
 
 ### Added
 - Commands.js:
-    - help() command
+    - Added help() command
 - CreepManager.js:
-    - Function of calculate live creeps
-    - Function of start code for all roles
-    - New roles
-- File Visual.js
+    - Added function of calculate live creeps
+    - Added function of start code for all roles
+    - Added new roles
+- Added file Visual.js
 
 ### Changed
 - CreepManager.js:
@@ -91,22 +156,22 @@
 
 ### Fixed
 - Commands.js:
-    - Command ClearMemory()
+    - Fixed command ClearMemory()
     - Command ClearFlags()
 - CreepManager.js:
-    - Setting amount need creeps for rooms
+    - Fixed setting amount need creeps for rooms
 - main.js:
-    - Starting major functions
+    - Fixed starting major functions
 - RoomStats.js:
-    - Uncorrected output some parameters
+    - Fixed uncorrected output some parameters
 - Autobuilder.js:
     - Not important
 
 ## VIKING [0.1.3]
 
 ### Добавлено
-- Версирование проекта
-- Файл тактики для военного кода
+- Добавлено версирование проекта
+- Добавлен файл тактики для военного кода
 
 ### Изменено
 - Константы для автостроителя перенесены из main.js в Autobuilder.js
@@ -114,8 +179,8 @@
 ---
 
 ### Added
-- Version for project
-- Tactic file for war code
+- Added version for project
+- Added tactic file for war code
 
 ### Changed
 - Constants for autobuilder moved from main.js to Autobuilder.js

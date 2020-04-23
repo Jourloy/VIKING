@@ -1,11 +1,4 @@
-/**
- *
- *
- * ____________________ Screeps AI ____________________
- * @VIKING_repository: https://github.com/Jourloy/VIKING
- * @author: JOURLOY
- *
- */
+// Main start here
 
 /**
  * @param {int} length
@@ -178,10 +171,79 @@ function bodyPriority(body) {
 
 /**
  * Spawn creeps in all rooms
+ *
+ * @param {Object} room
  */
-function spawnCreep() {
-    for (i in Game.rooms) {
-        let room = Game.rooms[i];
+function spawnCreep(room) {
+    for (i in Memory.queue) {
+        if (room.name == Memory.queue[i].Room) {
+            const roomCreep = Game.rooms[Memory.queue[i].Room];
+            const roleCreep = Memory.queue[i].Role;
+
+            const info = GetRoomInformation(room.name);
+
+            const amountSpawns = info.Room.Spawns.Amount;
+            const firstSpawn = Game.getObjectById(info.Room.Spawns.FirstSpawn);
+            const secondSpawn = Game.getObjectById(info.Room.Spawns.SecondSpawn);
+            const thirdSpawn = Game.getObjectById(info.Room.Spawns.ThirdSpawn);
+
+            if (firstSpawn && amountSpawns > 1) {
+                if (firstSpawn && firstSpawn.spawning == null) {
+                    spawnProcess(firstSpawn, roleCreep, room);
+                } else if (secondSpawn && secondSpawn.spawning == null) {
+                    spawnProcess(secondSpawn, roleCreep, room);
+                } else if (thirdSpawn && thirdSpawn.spawning == null) {
+                    spawnProcess(thirdSpawn, roleCreep, room);
+                }
+            } else if (firstSpawn && firstSpawn.spawning == null) {
+                spawnProcess(firstSpawn, roleCreep, room);
+            }
+        }
+    }
+}
+
+/**
+ * Start spawn creep
+ *
+ * @param {Object} spawn
+ * @param {string} role
+ */
+function spawnProcess(spawn, role, room) {
+    if (spawn.spawning == null) {
+
+        const name = ['VIKING'];
+        const randomNumber = 1 + (Game.time % 20);
+        const newName = `${name} | ${GenerateString(randomNumber)} | ${Game.time%101}`
+
+        let spawnInfo = null;
+        let body = null;
+
+        if (creepInfo[role]) spawnInfo = creepInfo[role];
+
+        if (spawnInfo != null) {
+            let optional = {
+                isForRoad: spawnInfo.isForRoad,
+                moveBoost: spawnInfo.useBoost,
+                skipCarry: spawnInfo.skipCarry,
+                mustBe: spawnInfo.mustBe,
+                moveParts:spawnInfo.moveParts,
+            }
+            body = getBodyParts(room, spawnInfo.pattern, spawnInfo.count, optional);
+        }
+
+        if (spawn.spawnCreep(body, newName, {memory: {role: role, room:room.name} }) == 0) {
+            console.log("[INFO] Spawn start spawn creep [" + role + "] in " + spawn.room.name)
+            for (i in Memory.queue) {
+                if (Memory.queue[i] && Memory.queue[i].Role == role && Memory.queue[i].Room == spawn.room.name) {
+                    let CreepSpawn = Memory.queue.slice(i, i+1);
+                    let newList = [];
+                    for (i in Memory.queue) {
+                        if (Memory.queue[i] != CreepSpawn[0]) newList.push(Memory.queue[i])
+                    }
+                    Memory.queue = newList;
+                }
+            }
+        }
     }
 }
 
@@ -197,12 +259,14 @@ const INFORMAION = {
 module.exports.loop = function () {
     SetMemory();
     RoomStats();
-    AmountCreeps();
-    RunCreep();
-    CalculateCreeps();
-    //spawnCreep();
+    CreepManager();
 
     for (i in Game.rooms) {
-        if (Game.rooms[i].controller && Game.rooms[i].controller.my) Autobuild(Game.rooms[i]);
+        let room = Game.rooms[i];
+
+        if (room.controller && room.controller.my) {
+            Autobuild(room);
+            spawnCreep(room);
+        }
     }
 };

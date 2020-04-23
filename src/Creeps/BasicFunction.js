@@ -35,22 +35,11 @@ function GetRoomInformation(roomName) {
  * @param {Creep} creep
  */
 function GetActiveSource(creep) {
-    const info = Memory.Information[creep.room.name];
-    const room = Game.rooms[info.roomName];
+    const info = GetRoomInformation(creep.room.name);
+    const room = Game.rooms[info.RoomName];
     const sources = room.find(FIND_SOURCES_ACTIVE);
-    if (sources[0]) return sources[0];
+    if (sources[0]) return sources[0].id;
     else return false;
-}
-
-/**
- * Set creep memory
- *
- * @param {Creep} creep
- * @return {int} 0 - need energy/minerals for work. 1 - need go work.
- */
-function SetMemory(creep) {
-    if (creep.store.getUsedCapacity()() === 0) creep.memory.mode = 0;
-    else if (creep.store.getUsedCapacity() === creep.store.getCapacity()) creep.memory.mode = 1;
 }
 
 /**
