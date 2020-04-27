@@ -37,6 +37,39 @@ const CheckRoom = {
         return info;
     },
 
+    RefillStructures(room) {
+        let info = {};
+
+        let allStructures = [];
+        let importantStructures = [];
+        let notImportantStructures = [];
+
+        if (room.controller && room.controller.my) {
+            const structures = room.find(FIND_MY_STRUCTURES, {
+                filter: (strc) => {
+                    return strc.store && (strc.store.getCapacity() === null ? strc.store.getCapacity(RESOURCE_ENERGY) < strc.store.getCapacity() : strc.store.getUsedCapacity() < strc.store.getCapacity())
+                }
+            });
+
+            for (i in structures) {
+                if (structures[i].structureType == 'tower' || structures[i].structureType == 'spawn') {
+                    importantStructures.push(structures[i]);
+                } else {
+                    notImportantStructures.push(structures[i]);
+                }
+                allStructures.push(structures[i]);
+            }
+        }
+
+        info = {
+            All: allStructures,
+            Important: importantStructures,
+            NotImportant: notImportantStructures
+        }
+
+        return info;
+    },
+
     HostileCreeps(room) {
         let owners = [];
         let info = {};
@@ -219,7 +252,7 @@ const CheckRoom = {
         return info;
     },
 
-    OtherInfo(room) {
+    Other(room) {
         let info = {};
 
         let constructionSites = [];
@@ -228,14 +261,16 @@ const CheckRoom = {
         const cs = room.find(FIND_CONSTRUCTION_SITES);
 
         if (cs.length > 0) {
-            constructionSites = cs;
+            for (i in cs) {
+                constructionSites.push(cs[i].id);
+            }
             amountConstructionSites = cs.length;
         }
 
         info = {
             ConstructionSites: {
                 Amount: amountConstructionSites,
-                List: constructionSites,
+                Array: constructionSites,
             },
             Nuke: false,
         }
@@ -245,6 +280,8 @@ const CheckRoom = {
 }
 
 function RoomStats() {
+    Memory.Information = {};
+
     let Info;
 
     for (i in Game.rooms) {
@@ -253,12 +290,13 @@ function RoomStats() {
         Info = {
             RoomName:room.name,
             Room:{
+                RefillStructures:CheckRoom.RefillStructures(room),
                 Storage:CheckRoom.Storage(room),
                 HostileCreeps:CheckRoom.HostileCreeps(room),
                 Sources:CheckRoom.Sources(room),
                 Spawns:CheckRoom.Spawns(room),
                 Minerals:CheckRoom.Minerals(room),
-                Other:CheckRoom.OtherInfo(room),
+                Other:CheckRoom.Other(room),
                 Controller:CheckRoom.Controller(room),
                 Terminal:CheckRoom.Terminal(room)
             },

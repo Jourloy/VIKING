@@ -47,6 +47,42 @@ function GetActiveSource(creep) {
  *
  * @param {Creep} creep
  */
-function DoUpgrade(creep) {
-    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, { heuristicWeight: 1.2 });
+function DoUpgrade(creep, moveParameters) {
+    if (moveParameters) {
+        ignoreRoads = moveParameters.ignoreRoads || false;
+        ignoreCreeps = moveParameters.ignoreCreeps || false;
+        heuristicWeight = moveParameters.heuristicWeight || 1.2;
+        range = moveParameters.range || 1;
+        reusePath = moveParameters.reusePath || 20;
+    } else {
+        ignoreRoads = false;
+        ignoreCreeps = false;
+        heuristicWeight = 1.2;
+        range = 1;
+        reusePath = 20;
+    }
+    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, {ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath});
+}
+
+/**
+ * Go refill structure
+ *
+ * @param {Creep} creep
+ * @param {Object} structure
+ */
+function DoRefill(creep, structure, moveParameters) {
+    if (moveParameters) {
+        ignoreRoads = moveParameters.ignoreRoads || false;
+        ignoreCreeps = moveParameters.ignoreCreeps || false;
+        heuristicWeight = moveParameters.heuristicWeight || 1.2;
+        range = moveParameters.range || 1;
+        reusePath = moveParameters.reusePath || 20;
+    } else {
+        ignoreRoads = false;
+        ignoreCreeps = false;
+        heuristicWeight = 1.2;
+        range = 1;
+        reusePath = 20;
+    }
+    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(structure, {ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath});
 }

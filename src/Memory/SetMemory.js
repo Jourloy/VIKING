@@ -1,15 +1,5 @@
 // SetMemory start here
 
-function SetMemory() {
-    BasicBlocks()
-
-    for (let name in Memory.creeps) {
-        if (!Game.creeps[name]) {
-            delete Memory.creeps[name];
-        }
-    }
-}
-
 function BasicBlocks() {
     Memory.room = {};
 
@@ -43,5 +33,16 @@ function BasicParametersForRoom() {
         ENERGY_IN_TERMINAL:20000,
         FREE_CAPACITY_IN_TERMINAL:10000,
         BUNKER:true,
+    }
+}
+
+function SetMemory() {
+    BasicBlocks()
+    BasicParametersForRoom()
+
+    for (let name in Memory.creeps) {
+        if (!Game.creeps[name]) {
+            delete Memory.creeps[name];
+        }
     }
 }

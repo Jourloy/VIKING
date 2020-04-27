@@ -1,8 +1,68 @@
+## VIKING [0.2.100] - Rise of VIKINKGS
+
+### Добавлено
+- BasicFunctions.js:
+    - Добавлены переменные для перемешения крипов
+- Harvester.js:
+    - Добавлены переменные для перемещения крипов
+    - Добавлена возможность подберать упавшую энергию
+- RoomStats.js:
+    - Добавлена информация о пустых структурах
+- SetMemory.js:
+    - Добавлен вызов функции с параметрами для комнаты
+- AutoBuilder.js:
+    - Добавлена проверка контейнеров в комнате
+    - Добавлена расстановка строение для второго уровня контроллера
+
+### Изменено
+- Harvester.js:
+    - Настроена более точная работа для разных уровней контроллера
+- RoomStats.js:
+    - Вывод construction sites теперь в виде id
+- SetMemory.js:
+    - Перенесен основной блок
+
+### Исправлено
+- Main.js:
+    - Исправлено создание тела крипа
+
+---
+
+### Added
+- BasicFunctions.js:
+    - Added parameters for creep moving
+- Harvester.js:
+    - Added parameters for creep moving
+    - Added able to pickup dropped energy
+- RoomStats.js:
+    - Added information about empty structures
+- SetMemory.js:
+    - Added start a function with parameters for room
+- AutoBuilder.js:
+    - Added check containers in room
+    - Added setting construction sites for 2 RCL
+
+### Changed
+- Harvester.js:
+    - Did setting work for different RCL
+- RoomStats.js:
+    - Output construction sites now as id
+- SetMemory.js:
+    - Moved main block
+
+### Fixed
+- Main.js:
+    - Fixed body creating
+
 ## VIKING [0.2.44] - Rise of VIKINKGS
 
 ### Добавлено
 - CreepManager.js:
     - Добавлена фукнция подсчета живых крипов
+    - Добавлена функция для запуска кода крипа
+    - Добавлена ссылка на параметры крипа
+- Harvester.js:
+    - Добавлена фукнция работы (скоро будет изменена)
 - Добавлен файл info.js с описанием кода
 - main.js:
     - Добавлена функция выбора spawn для создания крипа
@@ -14,10 +74,7 @@
     - Активный источник подается в виде id
 - CreepManager.js:
     - Убрана ненужна функция для запуска кода крипов
-    - Добавлена функция для запуска кода крипа
-    - Добавлена ссылка на параметры крипа
 - Harvester.js:
-    - Добавлена фукнция работы (скоро будет изменена)
     - Установление памяти перенесено в основной блок
 - Main.js:
     - Убрано описание кода
@@ -30,11 +87,16 @@
     - Исрпавлена функция добычи ресурсов
 - Main.js:
     - Исправлен запуск некоторых функций
+
 ---
 
 ### Added
 - CreepManager.js:
     - Added function for calculate live creeps
+    - Added function for start creep code
+    - Added link on creep parameters
+- Harvester.js:
+    - Added work function (soon change)
 - Added file info.js with code description
 - main.js:
     - Added function for choose spawn for create creep
@@ -46,10 +108,7 @@
     - Active source give as id
 - CreepManager.js:
     - Removed unused function for start creep code
-    - Added function for start creep code
-    - Added link on creep parameters
 - Harvester.js:
-    - Added work function (soon change)
     - Setting memory moved in main block
 - Main.js:
     - Removed code description
@@ -87,6 +146,7 @@
 ### Исправлено
 - BasicFunctions.js:
     - Исправлена функция получения активного источника
+
 ---
 
 ### Added
@@ -139,6 +199,7 @@
     - Исправлено некорректное отображение некоторых параметров
 - Autobuilder.js:
     - Незначительные исправление
+
 ---
 
 ### Added

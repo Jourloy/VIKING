@@ -1,10 +1,33 @@
 // Autobuilder start here
 
-const x = 20; // Will change
-const y = 20; // Will change
-const RCL2 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+4,"y":y+1}]}}
-const RCL3 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2},{"x":x+4,"y":y+1},{"x":x+4,"y":y},{"x":x+4,"y":y-1},{"x":x+3,"y":y},{"x":x+3,"y":y-1}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+3,"y":y+1},{"x":x+4,"y":y+2},{"x":x+2,"y":y-1},{"x":x+3,"y":y-2},{"x":x+4,"y":y-2}]},"tower":{"pos":[{"x":x+5,"y":y+3}]}};
+//const x = 20; // Will change
+//const y = 20; // Will change
+//const RCL3 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2},{"x":x+4,"y":y+1},{"x":x+4,"y":y},{"x":x+4,"y":y-1},{"x":x+3,"y":y},{"x":x+3,"y":y-1}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+3,"y":y+1},{"x":x+4,"y":y+2},{"x":x+2,"y":y-1},{"x":x+3,"y":y-2},{"x":x+4,"y":y-2}]},"tower":{"pos":[{"x":x+5,"y":y+3}]}};
 
+/**
+ *
+ */
+function BuildInRoom(room) {
+    const mySpawns = room.find(FIND_MY_SPAWNS);
+
+    const x = mySpawns[0].pos.x;
+    const y = mySpawns[0].pos.y;
+
+    const source = room.find(FIND_SOURCES);
+
+    const path1 = PathFinder.search(mySpawns[0].pos, {pos: source[0].pos, range: 1})
+    const path2 = PathFinder.search(mySpawns[0].pos, {pos: source[1].pos, range: 1})
+    const containers = [path1.path[path1.path.length - 1], path2.path[path2.path.length - 1]];
+    const RCL2 = {"extension":{"pos":[{"x":x+1,"y":y+1},{"x":x+2,"y":y+1},{"x":x+1,"y":y+2},{"x":x+2,"y":y+2},{"x":x+3,"y":y+2}]},"road":{"pos":[{"x":x,"y":y+1},{"x":x+1,"y":y},{"x":x,"y":y-1},{"x":x-1,"y":y},{"x":x+2,"y":y},{"x":x+4,"y":y+1}]}}
+
+    for (i in RCL2['extension']['pos']) {
+        room.createConstructionSite(RCL2['extension']['pos'][i].x, RCL2['extension']['pos'][i].y, STRUCTURE_EXTENSION)
+    }
+    for (i in containers) {
+        console.log(containers[i])
+        room.createConstructionSite(containers[i], STRUCTURE_CONTAINER)
+    }
+}
 
 function CheckStructures(room, basicStructures) {
     let spawnsState;
@@ -12,6 +35,7 @@ function CheckStructures(room, basicStructures) {
     let towersState;
     let storageState;
     let terminalState;
+    let containerState;
 
     if (basicStructures.spawns) {
         const spawns = room.find(FIND_MY_SPAWNS);
@@ -40,6 +64,16 @@ function CheckStructures(room, basicStructures) {
         if (!room.terminal) terminalState = false;
         else terminalState = true;
     } else terminalState = true;
+
+    if (basicStructures.container) {
+        if (!room.terminal) terminalState = false;
+        else terminalState = true;
+    } else terminalState = true;
+
+    if (!spawnsState || !extensionsState || !towersState || !storageState ||
+        !terminalState || !containerState) {
+            BuildInRoom(room);
+        }
 }
 
 /**
@@ -48,8 +82,9 @@ function CheckStructures(room, basicStructures) {
 function RCL2RoomBuilder(room) {
     if (!room.memory.build) {
         const basicStructures = {
-            spawns:1,
-            extensions:5
+            spawns: 1,
+            extensions: 5,
+            container: 2
         }
 
         CheckStructures(room, basicStructures);

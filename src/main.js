@@ -97,11 +97,11 @@ function bodyPriority(body) {
  *  ----------------
  *
  * @param {Object} room
- * @param {List} pattern
+ * @param {Array} pattern
  * @param {int} count
  * @param {Object} optional
  */
- function getBodyParts(room, pattern, count, optional) {
+function getBodyParts(room, pattern, count, optional) {
      const roads = optional.isForRoad || false; // Move per 1 body part or move per 2 body parts
      let moveBoost = optional.moveBoost || null; // Will be used boosts?
      const priority = {}; // Unused
@@ -124,7 +124,7 @@ function bodyPriority(body) {
      }
      let index = 0;
      let moveIndex = 0;
-     let availableEnergy = room.energyAvailable;
+     let availableEnergy = room.energyCapacityAvailable;
      if (optional && optional.maxEnergy) {
          availableEnergy = Math.min(optional.maxEnergy, availableEnergy);
      }
@@ -219,7 +219,6 @@ function spawnProcess(spawn, role, room) {
         let body = null;
 
         if (creepInfo[role]) spawnInfo = creepInfo[role];
-
         if (spawnInfo != null) {
             let optional = {
                 isForRoad: spawnInfo.isForRoad,
