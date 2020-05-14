@@ -1,7 +1,7 @@
 // Main start here
 
 /**
- * @param {int} length
+ * @param {number} length - length of string
  * @return {string}
  */
 function GenerateString(length) {
@@ -17,8 +17,8 @@ function GenerateString(length) {
 /**
  * Return direction for defence
  *
- * @param {DIRECTION} direction
- * @return {DIRECTION}
+ * @param {string} direction direction where is hostile creep
+ * @return {string}
  */
 function DefenceDirection(direction) {
     switch (direction) {
@@ -52,14 +52,9 @@ function DefenceDirection(direction) {
 /**
  * Return priority of part
  *
- *  ------------------------------------------------------------------------------
- * | This code was given by Sergey on Screeps Slack. Thank you very much :)       |
- *  ------------------------------------------------------------------------------
- * | Code corrected |
- *  ----------------
- *
- * @param {BODYPART} body
- * @return {int} Priority of this part
+ * @param {BodyPartConstant} body - body of creep
+ * @return {number} Priority of this part
+ * @author Sergey from Screeps Slack (code corrected)
  */
 function bodyPriority(body) {
     switch (body) {
@@ -90,16 +85,11 @@ function bodyPriority(body) {
 /**
  * Return creep's body part for spawn
  *
- *  ------------------------------------------------------------------------------
- * | This code was given by Sergey on Screeps Slack. Thank you very much :)       |
- *  ------------------------------------------------------------------------------
- * | Code corrected |
- *  ----------------
- *
  * @param {Object} room
  * @param {Array} pattern
  * @param {int} count
  * @param {Object} optional
+ * @author Sergey from Screeps Slack (code corrected)
  */
 function getBodyParts(room, pattern, count, optional) {
      const roads = optional.isForRoad || false; // Move per 1 body part or move per 2 body parts
@@ -204,6 +194,8 @@ function spawnCreep(room) {
 
 /**
  * Start spawn creep
+ * 
+ * !Add spawn miner with other memory
  *
  * @param {Object} spawn
  * @param {string} role
@@ -250,9 +242,6 @@ const INFORMAION = {
     MY_USERNAME:'JOURLOY',
     YOUR_USERNAME:'soon',
     ROOM_SIGN:'VIKING',
-    RESERVED_SIGN:'Reserved by VIKING',
-    ATTACKED_SIGN:'Attacked by VIKING',
-    CONTROL_SIGN:'Controlled by VIKING'
 }
 
 module.exports.loop = function () {
