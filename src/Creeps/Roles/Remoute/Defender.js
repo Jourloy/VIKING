@@ -8,7 +8,7 @@ function Defender(creep) {
     if (!creep.memory.room) Error(`Creep [id: ${creep.id}] have not home room in memory`);
     else {
 
-        // TODO:
+        // TODO: Code a defender
 
     }
 }
