@@ -1,17 +1,18 @@
 {
-    "author": "JOURLOT <JOURLOY@yandex.ru>",
-    "name": "viking",
-    "version": "0.2.102",
-    "bugs": "https://github.com/Jourloy/VIKING/issues",
-    "scripts": {
-        "build": "grunt"
-    },
-    "devDependencies": {
-        "grunt": "^1.1.0",
-        "grunt-contrib-concat": "^1.0.1"
-    },
-    "dependencies": {
-        "bump": "^0.2.5",
-        "grunt-bump": "^0.8.0"
-    }
+  "author": "JOURLOY <JOURLOY@yandex.ru>",
+  "name": "viking",
+  "version": "0.3.0",
+  "bugs": "https://github.com/Jourloy/VIKING/issues",
+  "scripts": {
+    "build": "grunt",
+    "test": "grunt concat"
+  },
+  "devDependencies": {
+    "grunt": "^1.1.0",
+    "grunt-contrib-concat": "^1.0.1"
+  },
+  "dependencies": {
+    "bump": "^0.2.5",
+    "grunt-bump": "^0.8.0"
+  }
 }

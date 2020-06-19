@@ -6,7 +6,6 @@
 */
 const CheckRoom = {
     Storage(room) {
-        let owners = [];
         let info = {};
 
         let storage = false;
@@ -47,7 +46,7 @@ const CheckRoom = {
         if (room.controller && room.controller.my) {
             const structures = room.find(FIND_MY_STRUCTURES, {
                 filter: (strc) => {
-                    return strc.store && (strc.store.getCapacity() === null ? strc.store.getCapacity(RESOURCE_ENERGY) < strc.store.getCapacity() : strc.store.getUsedCapacity() < strc.store.getCapacity())
+                    return strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity());
                 }
             });
 
@@ -104,15 +103,20 @@ const CheckRoom = {
         let info = {};
 
         let sourcesAmount = 0;
-        let firstSource = null;
         let secondSource = null;
 
-        const sources = room.find(FIND_SOURCES);
+        const spawns = room.find(FIND_MY_SPAWNS);
+        const spawn = spawns[0];
 
-        if (sources[0]) firstSource = sources[0].id;
-        if (sources[1]) secondSource = sources[1].id;
+        const sources = spawn.pos.findClosestByPath(FIND_SOURCES);
+        const sourcesInRoom = room.find(FIND_SOURCES);
 
-        if (sources.length > 0) sourcesAmount = sources.length
+        let firstSource = sources.id
+
+        if (sourcesInRoom[0].id == firstSource) secondSource = sourcesInRoom[1].id;
+        else secondSource = sourcesInRoom[0].id;
+
+        if (sourcesInRoom.length > 0) sourcesAmount = sourcesInRoom.length
 
         info = {
             Amount: sourcesAmount,

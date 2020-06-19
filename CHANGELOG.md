@@ -1,3 +1,49 @@
+## VIKING [0.3.0] - Rise of VIKINKGS
+
+### Добавлено
+- BasicFunctions.js:
+    - Добавлена функция перемещения крипов
+- Harvester.js:
+    - Добавлена возможность перетащить майнера
+- Miner.js:
+    - Добавлена возможность быть перетащеным
+- Main.js:
+    - Добавлен спавн miner
+
+### Изменено
+- CreepManager.js:
+    - Количество крипов для разных ролей изменено на 0
+    - Убраны параметры крипов
+- RoomStats.js:
+    - Изменен поиск источника
+
+### Исправлено
+- RoomStats.js:
+    - Исправлен фильтр пустых структур
+
+---
+
+### Added
+- BasicFunctions.js:
+    - Added function for transfer creeps
+- Harvester.js:
+    - Added ability for transfer creeps
+- Miner.js:
+    - Added ability for be transfered
+- Main.js:
+    - Added spawn miner
+
+### Changed
+- CreepManager.js:
+    - Amount of creeps for some roles changed to 0
+    - Removed creep's parameters
+- RoomStats.js:
+    - Changed source serching
+
+### Fixed
+- RoomStats.js:
+    - Fixed filter for empty structures
+
 ## VIKING [0.2.100] - Rise of VIKINKGS
 
 ### Добавлено

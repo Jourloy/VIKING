@@ -1,58 +1,12 @@
 const creepInfo = {
     'Harvester': HarvesterInfo,
-    'Manager': {
-        role:'Manager',
-        pattern:[CARRY],
-        count:5,
-        mustBe:[],
-        isForRoad:false,
-        useBoost:false,
-        moveParts:true
-    },
-    'Upgrader': {
-        RoomLevel: {
-            To_8: {
-                role:'upgrader',
-                pattern:[WORK,CARRY],
-                count:null,
-                mustBe:[],
-                isForRoad:true,
-                useBoost:false,
-                moveParts:true
-            },
-            From_8: {
-                role:'upgrader',
-                pattern:[WORK,CARRY],
-                count:2,
-                mustBe:[],
-                isForRoad:true,
-                useBoost:false,
-                moveParts:true
-            },
-        }
-    },
-    'MineralMiner': {
-        role:'MineralMiner',
-        pattern:[WORK],
-        count:null,
-        mustBe:[CARRY],
-        isForRoad:false,
-        useBoost:false,
-        moveParts:false
-    },
-    'Repairer': {
-        role:'Repairer',
-        pattern:[WORK, CARRY],
-        count:null,
-        mustBe:[],
-        isForRoad:true,
-        useBoost:false,
-        moveParts:true
-    },
+    'Miner': MinerInfo,
+    //'Upgrader': UpgraderInfo,
 }
 
 const startCreep = {
     'Harvester': harvester,
+    'Miner': miner,
 }
 
 function StartCreepCode() {
@@ -88,9 +42,11 @@ function CalculateAmountOfCreeps(roomInfo, role) {
         if (roomInfo.Room.Controller.Level > 1) return roomInfo.Room.Sources.Amount;
         else return 0;
     } else if (role == 'Upgrader') {
+        return 0;
         if (roomInfo.Room.Controller.Level > 1) return 1;
         else return 0;
     } else if (role == 'Builder') {
+        return 0;
         if (roomInfo.Room.Controller.Level > 1) {
             let constructionSites = roomInfo.Room.Other.ConstructionSites.Amount;
             if (constructionSites == 0) return 0;
@@ -98,6 +54,7 @@ function CalculateAmountOfCreeps(roomInfo, role) {
             else if (constructionSites >= 5) return 2;
         } else return 0;
     } else if (role == 'MineralMiner') {
+        return 0;
         if (roomInfo.Room.Controller.Level > 1) {
             const mineralRegeneration = roomInfo.Room.Minerals.MineralRegeneration;
             const extractor = roomInfo.Room.Minerals.Extractor;
@@ -105,7 +62,7 @@ function CalculateAmountOfCreeps(roomInfo, role) {
             else return 0;
         } else return 0;
     } else if (role == 'Harvester') {
-        if (roomInfo.Room.Controller.Level == 1) return 5;
+        if (roomInfo.Room.Controller.Level < 3) return 7;
         else return 0;
     }
 }

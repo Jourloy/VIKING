@@ -29,14 +29,75 @@ function GetRoomInformation(roomName) {
     }
 }
 
+function TransferMe(creep) {
+    creep.say('🚃');
+    const id = creep.id;
+
+    creep.memory.trainRole = 'body'
+
+    const trainHead = creep.room.find(FIND_MY_CREEPS, {
+        filter: (creep) => {
+            return creep.memory.trainRole && creep.memory.trainRole == 'Head' && creep.memory.trainTarget && creep.memory.trainTarget == id;
+        }
+    });
+
+    if (trainHead.length == 0) {
+        const trainHeadNew = creep.room.find(FIND_MY_CREEPS, {
+            filter: (creep) => {
+                return creep.memory.role == 'Harvester' || creep.memory.role == 'Transporter';
+            }
+        });
+
+        if (trainHeadNew.length > 0) {
+            trainHeadNew[0].memory.trainRole = 'Head';
+            trainHeadNew[0].memory.trainTarget = id;
+            trainHeadNew[0].memory.time = Game.time;
+        }
+    } else {
+        const target = creep;
+        const train = trainHead[0];
+        train.memory.time = Game.time
+
+        train.say('🚂');
+
+        if (train.pull(target) == ERR_NOT_IN_RANGE) {
+            train.moveTo(target, {visualizePathStyle: {
+                fill: 'transparent',
+                stroke: '#FF0000',
+                lineStyle: 'dashed',
+                strokeWidth: .15,
+                opacity: .1
+            }});
+        } else {
+            target.move(train);
+
+            if (!Game.getObjectById(target.memory.destinationId).structureType || Game.getObjectById(target.memory.destinationId).structureType != 'container') {
+                if (train.pos.isNearTo(Game.getObjectById(target.memory.destinationId))) {
+                    train.say("@")
+                    train.move(train.pos.getDirectionTo(target));
+                    train.memory.trainRole = '-';
+                } else {
+                    train.moveTo(Game.getObjectById(target.memory.destinationId));
+                }
+            } else {
+                if (train.pos.isEqualTo(Game.getObjectById(target.memory.destinationId))) {
+                    train.move(train.pos.getDirectionTo(target));
+                    train.memory.trainRole = '-';
+                } else {
+                    train.moveTo(Game.getObjectById(target.memory.destinationId));
+                }
+            }
+        }
+    }
+}
+
 /**
  * Return active source in room
  *
  * @param {Creep} creep
  */
 function GetActiveSource(creep) {
-    const info = GetRoomInformation(creep.room.name);
-    const room = Game.rooms[info.RoomName];
+    const room = Game.rooms[creep.room.name];
     const sources = room.find(FIND_SOURCES_ACTIVE);
     if (sources[0]) return sources[0].id;
     else return false;
@@ -61,7 +122,7 @@ function DoUpgrade(creep, moveParameters) {
         range = 1;
         reusePath = 20;
     }
-    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, {ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath});
+    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, { ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath });
 }
 
 /**
@@ -84,5 +145,5 @@ function DoRefill(creep, structure, moveParameters) {
         range = 1;
         reusePath = 20;
     }
-    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(structure, {ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath});
+    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(structure, { ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath });
 }

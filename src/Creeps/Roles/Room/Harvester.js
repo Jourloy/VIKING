@@ -1,6 +1,7 @@
 // Harvester start here
 
 const HarvesterInfo = {
+    name:'drone',
     role:'Harvester',
     pattern:[WORK,CARRY],
     count:25,
@@ -9,6 +10,7 @@ const HarvesterInfo = {
     useBoost:null,
     moveParts:true,
     skipCarry:true,
+    withoutMove:false,
 }
 
 const moveParametersForGetResource = {
@@ -38,7 +40,7 @@ function HarvesterGetResource(creep) {
         }
     })
 
-    if (droppedResource.length > 0) {
+    if (droppedResource.length > 0 && droppedResource.Amount > creep.store.getCapacity()) {
         if (creep.pickup(droppedResource[0]) == ERR_NOT_IN_RANGE) creep.moveTo(droppedResource[0], {ignoreCreeps: true, heuristicWeight: 1.2, range: 1, reusePath: 50})
     } else {
         if (!creep.memory.source) creep.memory.source = GetActiveSource(creep);
@@ -65,10 +67,11 @@ function HarvesterWork(creep) {
         if (info.Room.RefillStructures.All.length > 0 ) DoRefill(creep, info.Room.RefillStructures.All[0], {ignoreCreeps: true, heuristicWeight: 1.2, range: 1, reusePath: 50});
         else DoUpgrade(creep, {heuristicWeight: 1.2, range: 3, reusePath: 50});
     } else {
-        if (info.Room.Other.ConstructionSites.Amount > 0) {
+        if(info.Room.RefillStructures.All.length > 0 ) DoRefill(creep, info.Room.RefillStructures.All[0], {ignoreCreeps: true, heuristicWeight: 1.2, range: 1, reusePath: 50})
+        else if (info.Room.Other.ConstructionSites.Amount > 0) {
             const target = Game.getObjectById(info.Room.Other.ConstructionSites.Array[0])
             if (creep.build(target) == ERR_NOT_IN_RANGE) creep.moveTo(target, {heuristicWeight: 1.2, range: 3, reusePath: 50})
-        } else if(info.Room.RefillStructures.All.length > 0 ) DoRefill(creep, info.Room.RefillStructures.All[0], {ignoreCreeps: true, heuristicWeight: 1.2, range: 1, reusePath: 50});
+        }
         else DoUpgrade(creep, {heuristicWeight: 1.2, range: 3, reusePath: 50});
 
     }
@@ -84,11 +87,15 @@ const harvester = {
     control(creep) {
         if (creep.room.name == creep.memory.room) {
 
-            if (creep.store.getUsedCapacity() == 0) creep.memory.mode = 0;
-            else if (creep.store.getUsedCapacity() == creep.store.getCapacity()) creep.memory.mode = 1;
+            if (creep.memory.trainRole && creep.memory.trainRole == 'Head') {
 
-            if (creep.memory.mode == 0) HarvesterGetResource(creep);
-            else if (creep.memory.mode == 1) HarvesterWork(creep);
+            } else {
+                if (creep.store.getUsedCapacity() == 0) creep.memory.mode = 0;
+                else if (creep.store.getUsedCapacity() == creep.store.getCapacity()) creep.memory.mode = 1;
+
+                if (creep.memory.mode == 0) HarvesterGetResource(creep);
+                else if (creep.memory.mode == 1) HarvesterWork(creep);
+            }
         } else {
             creep.moveTo(new RoomPosition(25, 25, creep.memory.room), { ignoreRoads: true, heuristicWeight: 1.2, range: 1, reusePath: 50 });
         }
