@@ -1,12 +1,19 @@
 const creepInfo = {
     'Harvester': HarvesterInfo,
     'Miner': MinerInfo,
-    //'Upgrader': UpgraderInfo,
+    'Transporter':TransporterInfo,
+    'Upgrader': UpgraderInfo,
+    'Builder': BuilderInfo,
+    'Repairer': RepairerInfo,
 }
 
 const startCreep = {
     'Harvester': harvester,
     'Miner': miner,
+    'Transporter': transporter,
+    'Upgrader': upgrader,
+    'Builder': builder,
+    'Repairer': repairer,
 }
 
 function StartCreepCode() {
@@ -41,17 +48,18 @@ function CalculateAmountOfCreeps(roomInfo, role) {
     if (role == 'Miner') {
         if (roomInfo.Room.Controller.Level > 1) return roomInfo.Room.Sources.Amount;
         else return 0;
+    } else if (role == 'Transporter') {
+        if (roomInfo.Room.Controller.Level > 1) return 2;
     } else if (role == 'Upgrader') {
-        return 0;
-        if (roomInfo.Room.Controller.Level > 1) return 1;
+        if (roomInfo.Room.Controller.Level > 1 && roomInfo.Room.Controller.Level < 8) return 4;
+        else if (roomInfo.Room.Controller.Level == 8) return 1
         else return 0;
     } else if (role == 'Builder') {
-        return 0;
         if (roomInfo.Room.Controller.Level > 1) {
             let constructionSites = roomInfo.Room.Other.ConstructionSites.Amount;
             if (constructionSites == 0) return 0;
-            else if (constructionSites > 0 && constructionSites < 5) return 1;
-            else if (constructionSites >= 5) return 2;
+            else if (constructionSites > 0 && constructionSites < 2) return 1;
+            else if (constructionSites >= 2) return 2;
         } else return 0;
     } else if (role == 'MineralMiner') {
         return 0;
@@ -64,6 +72,8 @@ function CalculateAmountOfCreeps(roomInfo, role) {
     } else if (role == 'Harvester') {
         if (roomInfo.Room.Controller.Level < 3) return 7;
         else return 0;
+    } else if (role == 'Repairer') {
+        return 2;
     }
 }
 
@@ -89,12 +99,9 @@ function AmountCreeps() {
 
         if (room.controller && room.controller.my) {
 
-            Memory.room[room.name + '.amount.Harvester'] = CalculateAmountOfCreeps(information, 'Harvester');
-            Memory.room[room.name + '.amount.Miner'] = CalculateAmountOfCreeps(information, 'Miner');
-            Memory.room[room.name + '.amount.Upgrader'] = CalculateAmountOfCreeps(information, 'Upgrader');
-            Memory.room[room.name + '.amount.Builder'] = CalculateAmountOfCreeps(information, 'Builder');
-            Memory.room[room.name + '.amount.MineralMiner'] = CalculateAmountOfCreeps(information, 'MineralMiner');
-
+            for (i in Memory.roles) {
+                Memory.room[room.name + '.amount.' + Memory.roles[i]] = CalculateAmountOfCreeps(information, Memory.roles[i]);
+            }
         }
     }
 }

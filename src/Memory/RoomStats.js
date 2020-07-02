@@ -36,6 +36,60 @@ const CheckRoom = {
         return info;
     },
 
+    StructuresWithResources(room) {
+        let allObjects;
+        let energy = [];
+        let other = [];
+
+        if (room.controller && room.controller.my) {
+
+            const bannedStructures = ['spawn', 'extension', 'lab', 'tower'];
+
+            const spawns = room.find(FIND_MY_SPAWNS);
+            const spawn = spawns[0];
+
+            const structures = room.find(FIND_STRUCTURES, {
+                filter: (strc) => {
+                    return strc.store;
+                }
+            });
+            const tombstones = room.find(FIND_TOMBSTONES);
+            allObjects = structures.concat(tombstones);
+
+            let newArray = [];
+
+            for (i in allObjects) {
+                if (!bannedStructures.includes(allObjects[i].structureType)) newArray.push(allObjects[i]);
+            }
+
+            allObjects = newArray.sort(function (a, b) {
+                aRange = spawn.pos.getRangeTo(a);
+                bRange = spawn.pos.getRangeTo(b);
+                return aRange - bRange;
+            });
+
+            for (i in allObjects) {
+                if (structures[i].store && structures[i].store[RESOURCE_ENERGY] > 0) energy.push(structures[i]);
+                else if (structures[i].store && structures[i].store.getUsedCapacity() > 0) other.push(structures[i]);
+            }
+
+            energy = energy.sort(function (a, b) {
+                if (a.store[RESOURCE_ENERGY] != b.store[RESOURCE_ENERGY]) return b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY];
+                aRange = spawn.pos.getRangeTo(a);
+                bRange = spawn.pos.getRangeTo(b);
+                return aRange - bRange;
+            })
+        }
+
+        const info = {
+            All: allObjects,
+            Energy: energy,
+            Other: other
+        }
+
+        return info;
+    },
+
     RefillStructures(room) {
         let info = {};
 
@@ -44,11 +98,16 @@ const CheckRoom = {
         let notImportantStructures = [];
 
         if (room.controller && room.controller.my) {
-            const structures = room.find(FIND_MY_STRUCTURES, {
+            const spawns = room.find(FIND_MY_SPAWNS);
+            const spawn = spawns[0];
+
+            let structures = room.find(FIND_MY_STRUCTURES, {
                 filter: (strc) => {
                     return strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity());
                 }
             });
+
+            structures = structures.sort(function (a, b) { return spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b); });
 
             for (i in structures) {
                 if (structures[i].structureType == 'tower' || structures[i].structureType == 'spawn') {
@@ -99,24 +158,51 @@ const CheckRoom = {
         return info;
     },
 
+    NeedRepair(room) {
+        const spawns = room.find(FIND_MY_SPAWNS);
+        const spawn = spawns[0];
+        let structures = room.find(FIND_STRUCTURES, {
+            filter: (strc) => {
+                return strc.hits < strc.hitsMax;
+            }
+        });
+
+        structures = structures.sort(function (a, b) {
+            const result = spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b);
+            if(result === 0) return a.hits - b.hits;
+            return result;
+        });
+
+        const amount = structures.length;
+
+        const info = {
+            Amount: amount,
+            Structures: structures,
+        }
+
+        return info;
+    },
+
     Sources(room) {
         let info = {};
 
         let sourcesAmount = 0;
         let secondSource = null;
+        let firstSource = null;
 
-        const spawns = room.find(FIND_MY_SPAWNS);
-        const spawn = spawns[0];
+        if (room.controller && room.controller.my) {
+            const spawns = room.find(FIND_MY_SPAWNS);
+            const spawn = spawns[0];
 
-        const sources = spawn.pos.findClosestByPath(FIND_SOURCES);
-        const sourcesInRoom = room.find(FIND_SOURCES);
+            const sources = spawn.pos.findClosestByRange(FIND_SOURCES);
+            const sourcesInRoom = room.find(FIND_SOURCES);
+            firstSource = sources.id
 
-        let firstSource = sources.id
+            if (sourcesInRoom[0].id == firstSource) secondSource = sourcesInRoom[1].id;
+            else secondSource = sourcesInRoom[0].id;
 
-        if (sourcesInRoom[0].id == firstSource) secondSource = sourcesInRoom[1].id;
-        else secondSource = sourcesInRoom[0].id;
-
-        if (sourcesInRoom.length > 0) sourcesAmount = sourcesInRoom.length
+            if (sourcesInRoom.length > 0) sourcesAmount = sourcesInRoom.length
+        }
 
         info = {
             Amount: sourcesAmount,
@@ -269,6 +355,18 @@ const CheckRoom = {
                 constructionSites.push(cs[i].id);
             }
             amountConstructionSites = cs.length;
+
+            if (room.controller && room.controller.my) {
+                const spawns = room.find(FIND_MY_SPAWNS);
+                const spawn = spawns[0];
+                constructionSites = constructionSites.sort(function (a, b) {
+                    a = Game.getObjectById(a);
+                    b = Game.getObjectById(b);
+                    const result = spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b);
+                    if(result === 0) return b.progress - a.progress;
+                    return result;
+                });
+            }
         }
 
         info = {
@@ -283,6 +381,33 @@ const CheckRoom = {
     }
 }
 
+/**
+ * const info = GetRoomInformation(ROON);
+ *
+ * info.RoomName
+ *
+ * info.Room =>
+ *
+ * .RefillStructures {All | Important | NotImportant]
+ *
+ * .Storage {State | EnergyBalance | Energy | UsedCapacity | FreeCapacity]
+ *
+ * .HostileCreeps {State | Amount | Owners}
+ *
+ * .StructuresWithResources {All | Energy | Other}
+ *
+ * .Sources {Amount | FirstSource | SecondSource}
+ *
+ * .Spawns {Amount | FirstSpawn | SecondSpawn | ThirdSpawn}
+ *
+ * .Minerals {Source | MineralRegeneration | Extractor}
+ *
+ * .Other {Amount | Array}
+ *
+ * .Controller {State | IsMy | Reserved | Level | Progress | Downgrade | Sigh | SafeMode | SafeModeAvailable | SafeModeCooldown}
+ *
+ * .Terminal {State | Energy | UsedCapacity | FreeCapacity}
+ **/
 function RoomStats() {
     Memory.Information = {};
 
@@ -297,7 +422,9 @@ function RoomStats() {
                 RefillStructures:CheckRoom.RefillStructures(room),
                 Storage:CheckRoom.Storage(room),
                 HostileCreeps:CheckRoom.HostileCreeps(room),
+                StructuresWithResources:CheckRoom.StructuresWithResources(room),
                 Sources:CheckRoom.Sources(room),
+                NeedRepair:CheckRoom.NeedRepair(room),
                 Spawns:CheckRoom.Spawns(room),
                 Minerals:CheckRoom.Minerals(room),
                 Other:CheckRoom.Other(room),

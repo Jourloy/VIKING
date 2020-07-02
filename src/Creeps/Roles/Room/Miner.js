@@ -1,5 +1,5 @@
 const MinerInfo = {
-    name:'drone',
+    name:'VIKING [miner]',
     role:'Miner',
     pattern:[WORK],
     count:5,
@@ -31,7 +31,8 @@ const miner = {
                 if (container.length > 0) {
                     creep.memory.destinationId = container[0].id;
 
-                    if (creep.pos.isEqualTo(container[0].pos)) creep.harvest(sourceTarget);
+                    if (creep.pos.isEqualTo(container[0].pos) && container[0].store.getCapacity() != container[0].store.getUsedCapacity()) creep.harvest(sourceTarget);
+                    else if (creep.pos.isEqualTo(container[0].pos) && container[0].store.getCapacity() == container[0].store.getUsedCapacity()) creep.say('💤')
                     else TransferMe(creep);
                 } else {
                     creep.memory.destinationId = creep.memory.source;

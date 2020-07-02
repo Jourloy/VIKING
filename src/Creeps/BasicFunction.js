@@ -17,6 +17,43 @@ function FindHostileCreeps(room, target, optional) {
     }
 }
 
+
+/**
+ * Find structure with resource and withdraw energy
+ * 
+ * @param {Creep} creep 
+ * @param {RESOURCE} resource
+ */
+function GetResource(creep, resource) {
+    if (resource == RESOURCE_ENERGY) {
+        const information = GetRoomInformation(creep.room.name);
+        let energyStructures = information.Room.StructuresWithResources.Energy;
+        const droppedResources = creep.room.find(FIND_DROPPED_RESOURCES);
+
+        if (energyStructures.length > 0) {
+            if (creep.withdraw(energyStructures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(energyStructures[0]);
+        } else if (droppedResources && droppedResources.length > 0 && droppedResources[0].amount > creep.store.getFreeCapacity()) {
+            if (creep.pickup(droppedResources[0], RESOURCES_ALL) == ERR_NOT_IN_RANGE) creep.moveTo(droppedResources[0]);
+        } else creep.say(CreepSay('waiting'));
+    }
+}
+
+/**
+ * waiting
+ * searching
+ * 
+ * @param {String} target 
+ */
+function CreepSay(target) {
+    if (target == 'waiting') {
+        const speech = ['WAIT', 'WAIT.', 'WAIT..', 'WAIT...'];
+        return speech[Game.time%speech.length];
+    } else if (target == 'searching') {
+        const speech = ['SEARCH', 'SEARCH.', 'SEARCH..', 'SEARCH...'];
+        return speech[Game.time%speech.length];
+    }
+}
+
 /**
  * Return object with information about room
  *
@@ -75,14 +112,12 @@ function TransferMe(creep) {
                 if (train.pos.isNearTo(Game.getObjectById(target.memory.destinationId))) {
                     train.say("@")
                     train.move(train.pos.getDirectionTo(target));
-                    train.memory.trainRole = '-';
                 } else {
                     train.moveTo(Game.getObjectById(target.memory.destinationId));
                 }
             } else {
                 if (train.pos.isEqualTo(Game.getObjectById(target.memory.destinationId))) {
                     train.move(train.pos.getDirectionTo(target));
-                    train.memory.trainRole = '-';
                 } else {
                     train.moveTo(Game.getObjectById(target.memory.destinationId));
                 }
@@ -125,6 +160,24 @@ function DoUpgrade(creep, moveParameters) {
     if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, { ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath });
 }
 
+function DoRepair(creep) {
+    const info = GetRoomInformation(creep.room.name);
+    const needRepairStrc = info.Room.NeedRepair;
+
+    if (needRepairStrc.Amount > 0) {
+        if (creep.repair(needRepairStrc.Structures[0]) == ERR_NOT_IN_RANGE) creep.moveTo(needRepairStrc.Structures[0]);
+    } else DoBuild(creep)
+}
+
+function DoBuild(creep) {
+    const info = GetRoomInformation(creep.room.name);
+
+    if (info.Room.Other.ConstructionSites.Amount > 0) {
+        const target = Game.getObjectById(info.Room.Other.ConstructionSites.Array[0])
+        if (creep.build(target) == ERR_NOT_IN_RANGE) creep.moveTo(target, {heuristicWeight: 1.2, range: 3, reusePath: 50})
+    }
+    else DoUpgrade(creep, {heuristicWeight: 1.2, range: 3, reusePath: 50});
+}
 /**
  * Go refill structure
  *

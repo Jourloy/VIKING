@@ -1,25 +1,100 @@
-## VIKING [0.3.0] - Rise of VIKINKGS
+## VIKING [0.3.49] - Rise of VIKINKGS
 
 ### Добавлено
 - BasicFunctions.js:
-    - Добавлена функция перемещения крипов
+    - Добавлена функция получения энергии
+    - Добавлена функции для разговора крипов
+    - Добавлена функция ремонта
+    - Добавлена функция строительства
+- CreepManager.js:
+    - Добавлены 4 новые роли
+- Builder.js:
+    - Добавлена новая роль
 - Harvester.js:
-    - Добавлена возможность перетащить майнера
+    - Добавлена проверка на трансфер крипа
 - Miner.js:
-    - Добавлена возможность быть перетащеным
+    - Добавлена проверка на заполненность контейнера
+- Repairer.js:
+    - Добавлена новая роль
+- Transporter.js:
+    - Добавлена новая роль
+- Upgrader.js:
+    - Добавлена новая роль
+- Tower.js:
+    - Добавлена новая роль
 - Main.js:
-    - Добавлен спавн miner
+    - Добавлена функция на определение на публичном ли сервере находится бот
+    - Добавлена возможность генерировать пиксели
+    - Добавлена проверка на наличие Room в Memory.queue
 
 ### Изменено
 - CreepManager.js:
-    - Количество крипов для разных ролей изменено на 0
-    - Убраны параметры крипов
-- RoomStats.js:
-    - Изменен поиск источника
+    - Изменен подсчет количества крипов
+    - Сокращен запуск подсчета
+- Harvester.js:
+    - Изменен алгоритм получения энергии
+    - Изменен алгоритм работы
+
 
 ### Исправлено
-- RoomStats.js:
-    - Исправлен фильтр пустых структур
+- Main.js:
+    - Исправлен параметр в генерации тела крипа
+    - Исправлен ROOM_SIGN
+
+### Ошибки
+- Все крипы берут энергию из одного контейнера, а не из двух
+- Все крипы берут из одного и того же сброшенного ресурса
+- Если остались только строители, то колония умирает
+- Иногда спавн попадает в список структур с энергией
+
+---
+
+### Added
+- BasicFunctions.js:
+    - Added function for get energy
+    - Added function for creep's speech
+    - Added function for repair
+    - Added function for build
+- CreepManager.js:
+    - Added 4 new roles
+- Builder.js:
+    - Added new role
+- Harvester.js:
+    - Added checking for creep transferring
+- Miner.js:
+    - Added checking for container capacity usage
+- Repairer.js:
+    - Added new role
+- Transporter.js:
+    - Added new role
+- Upgrader.js:
+    - Added new role
+- Tower.js:
+    - Added new role
+- Main.js:
+    - Added function for define public server
+    - Added generating pixels
+    - Added checking on Room in Memory.queue
+
+### Changed
+- CreepManager.js:
+    - Changed calculating amount of creeps
+    - Shorted launch calculating
+- Harvester.js:
+    - Changed algorithm for get energy
+    - Changed work algorithm
+
+
+### Fixed
+- Main.js:
+    - Fixed parameter in generation creep's body
+    - Fixed ROOM_SIGN
+
+### Issues
+- All creeps get energy from one container
+- All creep get energy from one dropped energy
+- If alive only builder, then colony will die
+- Sometimes spawn get into list of structures with
 
 ---
 
@@ -29,7 +104,7 @@
 - Harvester.js:
     - Added ability for transfer creeps
 - Miner.js:
-    - Added ability for be transfered
+    - Added ability for be transferred
 - Main.js:
     - Added spawn miner
 
@@ -38,7 +113,7 @@
     - Amount of creeps for some roles changed to 0
     - Removed creep's parameters
 - RoomStats.js:
-    - Changed source serching
+    - Changed source searching
 
 ### Fixed
 - RoomStats.js:
@@ -48,10 +123,10 @@
 
 ### Добавлено
 - BasicFunctions.js:
-    - Добавлены переменные для перемешения крипов
+    - Добавлены переменные для перемещения крипов
 - Harvester.js:
     - Добавлены переменные для перемещения крипов
-    - Добавлена возможность подберать упавшую энергию
+    - Добавлена возможность подбирать упавшую энергию
 - RoomStats.js:
     - Добавлена информация о пустых структурах
 - SetMemory.js:
@@ -104,11 +179,11 @@
 
 ### Добавлено
 - CreepManager.js:
-    - Добавлена фукнция подсчета живых крипов
+    - Добавлена функция подсчета живых крипов
     - Добавлена функция для запуска кода крипа
     - Добавлена ссылка на параметры крипа
 - Harvester.js:
-    - Добавлена фукнция работы (скоро будет изменена)
+    - Добавлена функция работы (скоро будет изменена)
 - Добавлен файл info.js с описанием кода
 - main.js:
     - Добавлена функция выбора spawn для создания крипа
@@ -172,7 +247,7 @@
 
 ### Добавлено
 - Harvester.js:
-    - Добавлена фукнция добычи энергии и работы
+    - Добавлена функция добычи энергии и работы
     - Добавлено установление режима в память крипа
 - SetMemory.js:
     - Добавлена роль Harvester

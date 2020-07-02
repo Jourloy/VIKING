@@ -95,7 +95,7 @@ function getBodyParts(room, pattern, count, optional) {
     const priority = {}; // Unused
     const skipCarry = optional.skipCarry || false; // Skip carry parts?
     const mustBe = optional.mustBe || []; // Important body parts. For example result will be [ATTACK, CARRY, CARRY, MOVE, MOVE] with pattern [CARRY]
-    const moveParts = optional.moveParts || true; // Add MOVE in creep's dody?
+    const moveParts = optional.moveParts; // Add MOVE in creep's dody?
     if (moveBoost &&
         !_.includes([RESOURCE_ZYNTHIUM_OXIDE, RESOURCE_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE], moveBoost)) {
         logger.logWarning(MODULE_NAME, `Incorect parameter moveBoost: ${moveBoost}`);
@@ -163,7 +163,7 @@ function getBodyParts(room, pattern, count, optional) {
  */
 function spawnCreep(room) {
     for (i in Memory.queue) {
-        if (room.name == Memory.queue[i].Room) {
+        if (Memory.queue[i] && Memory.queue[i].Room && room.name == Memory.queue[i].Room) {
             const roleCreep = Memory.queue[i].Role;
 
             const info = GetRoomInformation(room.name);
@@ -204,12 +204,17 @@ function spawnProcess(spawn, role, room) {
 
         if (creepInfo[role]) spawnInfo = creepInfo[role];
         if (spawnInfo != null) {
+            let withoutMove;
+            if (spawnInfo.moveParts == true) withoutMove = false
+            else withoutMove = true;
             let optional = {
+                role: spawnInfo.role,
                 isForRoad: spawnInfo.isForRoad,
                 moveBoost: spawnInfo.useBoost,
                 skipCarry: spawnInfo.skipCarry,
                 mustBe: spawnInfo.mustBe,
                 moveParts: spawnInfo.moveParts,
+                withoutMove: withoutMove
             }
             body = getBodyParts(room, spawnInfo.pattern, spawnInfo.count, optional);
 
@@ -264,7 +269,7 @@ function spawnProcess(spawn, role, room) {
 const INFORMAION = {
     MY_USERNAME: 'JOURLOY',
     YOUR_USERNAME: 'soon',
-    ROOM_SIGN: 'ZERG',
+    ROOM_SIGN: 'VIKING',
 }
 
 const COLORS = {
@@ -272,10 +277,22 @@ const COLORS = {
     ENERGY: '#fee56d'
 }
 
+/**
+ * Define where start bot
+ * @return {boolean}
+ */
+function publicServer() {
+    return Game.shard.name.includes('shard');
+}
+
 module.exports.loop = function () {
     SetMemory();
     RoomStats();
     CreepManager();
+
+    if (publicServer()) {
+        if (Game.cpu.bucket > 5000) Game.cpu.generatePixel();
+    }
 
     for (i in Game.rooms) {
         let room = Game.rooms[i];

@@ -3,6 +3,9 @@
 function BasicBlocks() {
     Memory.room = {};
 
+    if (!Memory.Timer) Memory.Timer = {};
+    else Memory.Timer = Memory.Timer;
+
     if (!Memory.Information) Memory.Information = {};
     else Memory.Information = Memory.Information;
 
@@ -16,7 +19,7 @@ function BasicBlocks() {
     else Memory.BannedResources = Memory.BannedResources;
 
     Memory.roles = [
-        "Refiller",
+        "Transporter",
         "Builder",
         "Miner",
         "MineralMiner",
