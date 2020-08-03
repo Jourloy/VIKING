@@ -29,11 +29,21 @@ function GetResource(creep, resource) {
         const information = GetRoomInformation(creep.room.name);
         let energyStructures = information.Room.StructuresWithResources.Energy;
         const droppedResources = creep.room.find(FIND_DROPPED_RESOURCES);
+        const sourceId = GetActiveSource(creep)
 
         if (energyStructures.length > 0) {
-            if (creep.withdraw(energyStructures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(energyStructures[0]);
+            energyStructures = energyStructures.sort(function (a, b) {
+                return b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY];
+            })
+        }
+
+        if (energyStructures.length > 0 && energyStructures[0].store[RESOURCE_ENERGY] > 100) {
+            if (creep.withdraw(energyStructures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(energyStructures[0], moveParams);
         } else if (droppedResources && droppedResources.length > 0 && droppedResources[0].amount > creep.store.getFreeCapacity()) {
-            if (creep.pickup(droppedResources[0], RESOURCES_ALL) == ERR_NOT_IN_RANGE) creep.moveTo(droppedResources[0]);
+            if (creep.pickup(droppedResources[0], RESOURCES_ALL) == ERR_NOT_IN_RANGE) creep.moveTo(droppedResources[0], moveParams);
+        } else if (sourceId != false) {
+            const source = Game.getObjectById(sourceId)
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE) creep.moveTo(source, moveParams);
         } else creep.say(CreepSay('waiting'));
     }
 }
@@ -81,7 +91,7 @@ function TransferMe(creep) {
     if (trainHead.length == 0) {
         const trainHeadNew = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
-                return creep.memory.role == 'Harvester' || creep.memory.role == 'Transporter';
+                return creep.memory.role == 'Harvester' || creep.memory.role == 'Transporter' || creep.memory.role == 'Helper' || creep.memory.role == 'Builder';
             }
         });
 
@@ -143,21 +153,8 @@ function GetActiveSource(creep) {
  *
  * @param {Creep} creep
  */
-function DoUpgrade(creep, moveParameters) {
-    if (moveParameters) {
-        ignoreRoads = moveParameters.ignoreRoads || false;
-        ignoreCreeps = moveParameters.ignoreCreeps || false;
-        heuristicWeight = moveParameters.heuristicWeight || 1.2;
-        range = moveParameters.range || 1;
-        reusePath = moveParameters.reusePath || 20;
-    } else {
-        ignoreRoads = false;
-        ignoreCreeps = false;
-        heuristicWeight = 1.2;
-        range = 1;
-        reusePath = 20;
-    }
-    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, { ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath });
+function DoUpgrade(creep) {
+    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, moveParams);
 }
 
 function DoRepair(creep) {
@@ -165,7 +162,7 @@ function DoRepair(creep) {
     const needRepairStrc = info.Room.NeedRepair;
 
     if (needRepairStrc.Amount > 0) {
-        if (creep.repair(needRepairStrc.Structures[0]) == ERR_NOT_IN_RANGE) creep.moveTo(needRepairStrc.Structures[0]);
+        if (creep.repair(needRepairStrc.Structures[0]) == ERR_NOT_IN_RANGE) creep.moveTo(needRepairStrc.Structures[0], moveParams);
     } else DoBuild(creep)
 }
 
@@ -174,9 +171,9 @@ function DoBuild(creep) {
 
     if (info.Room.Other.ConstructionSites.Amount > 0) {
         const target = Game.getObjectById(info.Room.Other.ConstructionSites.Array[0])
-        if (creep.build(target) == ERR_NOT_IN_RANGE) creep.moveTo(target, {heuristicWeight: 1.2, range: 3, reusePath: 50})
+        if (creep.build(target) == ERR_NOT_IN_RANGE) creep.moveTo(target, moveParams)
     }
-    else DoUpgrade(creep, {heuristicWeight: 1.2, range: 3, reusePath: 50});
+    else DoUpgrade(creep);
 }
 /**
  * Go refill structure
@@ -184,19 +181,6 @@ function DoBuild(creep) {
  * @param {Creep} creep
  * @param {Object} structure
  */
-function DoRefill(creep, structure, moveParameters) {
-    if (moveParameters) {
-        ignoreRoads = moveParameters.ignoreRoads || false;
-        ignoreCreeps = moveParameters.ignoreCreeps || false;
-        heuristicWeight = moveParameters.heuristicWeight || 1.2;
-        range = moveParameters.range || 1;
-        reusePath = moveParameters.reusePath || 20;
-    } else {
-        ignoreRoads = false;
-        ignoreCreeps = false;
-        heuristicWeight = 1.2;
-        range = 1;
-        reusePath = 20;
-    }
-    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(structure, { ignoreRoads: ignoreCreeps, ignoreCreeps: ignoreCreeps, heuristicWeight: heuristicWeight, range: range, reusePath: reusePath });
+function DoRefill(creep, structure) {
+    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(structure, moveParams);
 }

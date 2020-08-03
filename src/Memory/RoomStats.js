@@ -15,7 +15,7 @@ const CheckRoom = {
         let usedCapacity = null;
         let freeCapacity = null;
 
-        if (room.storage) {
+        if (room.storage && room.terminal) {
             storage = true;
             if (room.storage.store[RESOURCE_ENERGY] + room.terminal[RESOURCE_ENERGY] > 200000) energyBalance = true;
             else energyBalance = false;
@@ -40,6 +40,7 @@ const CheckRoom = {
         let allObjects;
         let energy = [];
         let other = [];
+        let tombstones;
 
         if (room.controller && room.controller.my) {
 
@@ -53,8 +54,9 @@ const CheckRoom = {
                     return strc.store;
                 }
             });
-            const tombstones = room.find(FIND_TOMBSTONES);
-            allObjects = structures.concat(tombstones);
+            allObjects = structures;
+
+            tombstones = room.find(FIND_TOMBSTONES);
 
             let newArray = [];
 
@@ -62,13 +64,13 @@ const CheckRoom = {
                 if (!bannedStructures.includes(allObjects[i].structureType)) newArray.push(allObjects[i]);
             }
 
-            allObjects = newArray.sort(function (a, b) {
+            let allObjectsWithoutBanned = newArray.sort(function (a, b) {
                 aRange = spawn.pos.getRangeTo(a);
                 bRange = spawn.pos.getRangeTo(b);
                 return aRange - bRange;
             });
 
-            for (i in allObjects) {
+            for (i in allObjectsWithoutBanned) {
                 if (structures[i].store && structures[i].store[RESOURCE_ENERGY] > 0) energy.push(structures[i]);
                 else if (structures[i].store && structures[i].store.getUsedCapacity() > 0) other.push(structures[i]);
             }
@@ -84,7 +86,8 @@ const CheckRoom = {
         const info = {
             All: allObjects,
             Energy: energy,
-            Other: other
+            Other: other,
+            Tombstones: tombstones,
         }
 
         return info;
@@ -347,6 +350,7 @@ const CheckRoom = {
 
         let constructionSites = [];
         let amountConstructionSites = 0;
+        let amountOfCreeps = 0;
 
         const cs = room.find(FIND_CONSTRUCTION_SITES);
 
@@ -359,6 +363,19 @@ const CheckRoom = {
             if (room.controller && room.controller.my) {
                 const spawns = room.find(FIND_MY_SPAWNS);
                 const spawn = spawns[0];
+                
+                const extractor = room.find(FIND_STRUCTURES, {
+                    filter: (strc) => {
+                        return strc.type == 'extractor';
+                    }
+                });
+
+                amountOfCreeps = room.find(FIND_MY_CREEPS, {
+                    filter: (crp) => {
+                        return crp.memory.role != 'Miner' && crp.memory.role != 'Helper';
+                    }
+                }).length;
+
                 constructionSites = constructionSites.sort(function (a, b) {
                     a = Game.getObjectById(a);
                     b = Game.getObjectById(b);
@@ -375,6 +392,7 @@ const CheckRoom = {
                 Array: constructionSites,
             },
             Nuke: false,
+            AmountOfCreeps: amountOfCreeps,
         }
 
         return info;

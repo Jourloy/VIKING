@@ -236,7 +236,7 @@ function spawnProcess(spawn, role, room) {
             } else number = 1;
 
             if (spawn.spawnCreep(body, name, { memory: { role: role, room: room.name, number: number } }) == 0) {
-                console.log("[INFO] Spawn start spawn creep [" + role + "] in " + spawn.room.name)
+                logging("Spawn start spawn creep [" + role + "] in " + spawn.room.name)
                 for (i in Memory.queue) {
                     if (Memory.queue[i] && Memory.queue[i].Role == role && Memory.queue[i].Room == spawn.room.name) {
                         let CreepSpawn = Memory.queue.slice(i, i + 1);
@@ -250,7 +250,7 @@ function spawnProcess(spawn, role, room) {
             }
         } else if (creepInfo[role]) {
             if (spawn.spawnCreep(body, name, { memory: { role: role, room: room.name } }) == 0) {
-                console.log("[INFO] Spawn start spawn creep [" + role + "] in " + spawn.room.name)
+                logging("Spawn start spawn creep [" + role + "] in " + spawn.room.name)
                 for (i in Memory.queue) {
                     if (Memory.queue[i] && Memory.queue[i].Role == role && Memory.queue[i].Room == spawn.room.name) {
                         let CreepSpawn = Memory.queue.slice(i, i + 1);
@@ -285,11 +285,18 @@ function publicServer() {
     return Game.shard.name.includes('shard');
 }
 
+const moveParams = {
+    heuristicWeight: 1.2, 
+    ignoreCreeps: false, 
+    reusePath: 30,
+}
+
 module.exports.loop = function () {
     SetMemory();
     RoomStats();
     CreepManager();
-
+    tower.control();
+    
     if (publicServer()) {
         if (Game.cpu.bucket > 5000) Game.cpu.generatePixel();
     }

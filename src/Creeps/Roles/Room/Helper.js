@@ -1,10 +1,10 @@
-// Builder start here
+// Harvester start here
 
-const BuilderInfo = {
-    name:'VIKING [builder]',
-    role:'Builder',
+const HelperInfo = {
+    name:'VIKING [helper]',
+    role:'Helper',
     pattern:[WORK,CARRY],
-    count:50,
+    count:3,
     mustBe:[],
     isForRoad:true,
     useBoost:null,
@@ -15,12 +15,12 @@ const BuilderInfo = {
 /**
  * Code for creep harvester
  */
-const builder = {
+const helper = {
     /**
      * @param {Creep} creep
      */
     control(creep) {
-        if (!creep.spawning) {
+        if (creep.room.name == creep.memory.room) {
             if (creep.memory.trainRole && creep.memory.trainRole == 'Head') {
                 const target = Game.getObjectById(creep.memory.trainTarget);
                 if (target != null) {
@@ -35,16 +35,12 @@ const builder = {
             } else {
                 if (creep.store.getUsedCapacity() == 0) creep.memory.mode = 0;
                 else if (creep.store.getUsedCapacity() == creep.store.getCapacity()) creep.memory.mode = 1;
-                else if (!creep.memory.mode) creep.memory.mode = 0
 
                 if (creep.memory.mode == 0) GetResource(creep, RESOURCE_ENERGY);
-                else if (creep.memory.mode == 1) {
-                    const info = GetRoomInformation(creep.room.name);
-                    const room = creep.room
-                    if (Memory.room[room.name + ".amountIsLive.Harvester"] == 0 && Memory.room[room.name + ".amountIsLive.Transporter"] == 0) DoRefill(creep, info.Room.RefillStructures.All[0], moveParams);
-                    else DoBuild(creep);
-                }
+                else if (creep.memory.mode == 1) HarvesterWork(creep);
             }
+        } else {
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.room), moveParams);
         }
     }
 }

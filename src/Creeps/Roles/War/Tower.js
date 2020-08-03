@@ -1,7 +1,8 @@
 // Tower start here
 
 function towersControl(tower) {
-    const info = GetRoomInformation(tower.roomName);
+    const info = GetRoomInformation(tower.room.name);
+    const room = tower.room;
 
     if (info.Room.HostileCreeps.State == true) {
         const HostileCreeps = room.find(FIND_HOSTILE_CREEPS, {

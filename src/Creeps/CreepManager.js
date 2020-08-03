@@ -5,6 +5,7 @@ const creepInfo = {
     'Upgrader': UpgraderInfo,
     'Builder': BuilderInfo,
     'Repairer': RepairerInfo,
+    'Helper': HelperInfo,
 }
 
 const startCreep = {
@@ -14,6 +15,7 @@ const startCreep = {
     'Upgrader': upgrader,
     'Builder': builder,
     'Repairer': repairer,
+    'Helper': helper,
 }
 
 function StartCreepCode() {
@@ -45,6 +47,7 @@ function getCreepInfo(role) {
  * @return {Object}
  */
 function CalculateAmountOfCreeps(roomInfo, role) {
+    const room = Game.rooms[roomInfo.RoomName]
     if (role == 'Miner') {
         if (roomInfo.Room.Controller.Level > 1) return roomInfo.Room.Sources.Amount;
         else return 0;
@@ -70,10 +73,15 @@ function CalculateAmountOfCreeps(roomInfo, role) {
             else return 0;
         } else return 0;
     } else if (role == 'Harvester') {
-        if (roomInfo.Room.Controller.Level < 3) return 7;
+        if (roomInfo.Room.Controller.Level < 3) return 10;
+        else if (roomInfo.Room.Controller.Level >= 3 && Memory.room[room.name + ".amountIsLive.Transporter"] == 0) return 2
         else return 0;
     } else if (role == 'Repairer') {
-        return 2;
+        if (roomInfo.Room.Controller.Level > 1) return 2;
+        else return 0
+    } else if (role == 'Helper') {
+        if (roomInfo.Room.Other.AmountOfCreeps == 0) return 2;
+        else return 0;
     }
 }
 
@@ -163,7 +171,6 @@ function CalculateCreeps() {
 }
 
 function CreepManager() {
-    CalculateAmountOfCreeps();
     AmountCreeps();
     amountCreepsIsLive();
     CalculateCreeps();

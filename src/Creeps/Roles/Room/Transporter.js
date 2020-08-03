@@ -33,8 +33,8 @@ function TransporterGetResource(creep) {
 
 function TransporterWork(creep) {
     const information = GetRoomInformation(creep.room.name);
-    if (information.Room.RefillStructures.Important.length > 0) DoRefill(creep, information.Room.RefillStructures.Important[0], {ignoreCreeps: true, heuristicWeight: 1.2, range: 1, reusePath: 50});
-    if (information.Room.RefillStructures.All.length > 0 ) DoRefill(creep, information.Room.RefillStructures.All[0], {ignoreCreeps: true, heuristicWeight: 1.2, range: 1, reusePath: 50});
+    if (information.Room.RefillStructures.Important.length > 0) DoRefill(creep, information.Room.RefillStructures.Important[0], moveParams);
+    if (information.Room.RefillStructures.All.length > 0 ) DoRefill(creep, information.Room.RefillStructures.All[0], moveParams);
 }
 
 const transporter = {
@@ -45,14 +45,21 @@ const transporter = {
         if (!creep.spawning) {
             if (creep.memory.trainRole && creep.memory.trainRole == 'Head') {
                 const target = Game.getObjectById(creep.memory.trainTarget);
-                if (!Game.getObjectById(target.memory.destinationId).structureType || Game.getObjectById(target.memory.destinationId).structureType != 'container') {
-                    if (target.pos.isNearTo(Game.getObjectById(target.memory.destinationId))) creep.memory.trainRole = '-';
+                if (target != null) {
+                    if (!Game.getObjectById(target.memory.destinationId).structureType || Game.getObjectById(target.memory.destinationId).structureType != 'container') {
+                        if (target.pos.isNearTo(Game.getObjectById(target.memory.destinationId))) creep.memory.trainRole = '-';
+                    } else {
+                        if (target.pos.isEqualTo(Game.getObjectById(target.memory.destinationId))) creep.memory.trainRole = '-';
+                    }
                 } else {
-                    if (target.pos.isEqualTo(Game.getObjectById(target.memory.destinationId))) creep.memory.trainRole = '-';
+                    creep.memory.trainRole = '-'
                 }
             } else {
-                if (creep.store.getFreeCapacity() == creep.store.getCapacity()) TransporterGetResource(creep);
-                else TransporterWork(creep);
+                if (creep.store.getUsedCapacity() == 0) creep.memory.mode = 0;
+                else if (creep.store.getUsedCapacity() == creep.store.getCapacity()) creep.memory.mode = 1;
+
+                if (creep.memory.mode == 0) TransporterGetResource(creep);
+                else if (creep.memory.mode == 1) TransporterWork(creep);
             }
         }
     }

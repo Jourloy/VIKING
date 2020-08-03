@@ -12,37 +12,22 @@ const UpgraderInfo = {
     skipCarry:false,
 }
 
-function UpgraderGetResource(creep) {
-    const information = GetRoomInformation(creep.room.name);
-
-    const energyStructures = information.Room.StructuresWithResources.Energy;
-    const otherStructures = information.Room.StructuresWithResources.Other;
-
-    const droppedResources = creep.room.find(FIND_DROPPED_RESOURCES);
-
-    if (energyStructures.length > 0) {
-        if (creep.withdraw(energyStructures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(energyStructures[0]);
-    } else if (otherStructures.length > 0) {
-        if (creep.withdraw(otherStructures[0], RESOURCES_ALL) == ERR_NOT_IN_RANGE) creep.moveTo(otherStructures[0]);
-    } else if (droppedResources && droppedResources.length > 0 && droppedResources[0].amount > 100) {
-        if (creep.pickup(droppedResources[0], RESOURCES_ALL) == ERR_NOT_IN_RANGE) creep.moveTo(droppedResources[0]);
-    } else {
-        creep.say(CreepSay('waiting'))
-    }
-}
-
-function UpgraderWork(creep) {
-    DoUpgrade(creep, {heuristicWeight: 1.2, range: 3, reusePath: 50});
-}
-
 const upgrader = {
     /**
      * @param {Creep} creep
      */
     control(creep) {
         if (!creep.spawning) {
-            if (creep.store.getFreeCapacity() == creep.store.getCapacity()) UpgraderGetResource(creep);
-            else UpgraderWork(creep);
+            if (creep.store.getUsedCapacity() == 0) creep.memory.mode = 0;
+            else if (creep.store.getUsedCapacity() == creep.store.getCapacity()) creep.memory.mode = 1;
+
+            if (creep.memory.mode == 0) GetResource(creep, RESOURCE_ENERGY);
+            else if (creep.memory.mode == 1) {
+                const info = GetRoomInformation(creep.room.name);
+                const room = creep.room
+                if (Memory.room[room.name + ".amountIsLive.Harvester"] == 0 && Memory.room[room.name + ".amountIsLive.Transporter"] == 0) DoRefill(creep, info.Room.RefillStructures.All[0], moveParams);
+                else DoUpgrade(creep);
+            }
         }
     }
 }

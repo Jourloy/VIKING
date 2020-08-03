@@ -12,17 +12,6 @@ const RepairerInfo = {
     skipCarry:false,
 }
 
-
-function RepairerIWork(creep) {
-    const info = GetRoomInformation(creep.room.name);
-
-    if (info.Room.Other.ConstructionSites.Amount > 0) {
-        const target = Game.getObjectById(info.Room.Other.ConstructionSites.Array[0])
-        if (creep.build(target) == ERR_NOT_IN_RANGE) creep.moveTo(target, {heuristicWeight: 1.2, range: 3, reusePath: 50})
-    }
-    else DoUpgrade(creep, {heuristicWeight: 1.2, range: 3, reusePath: 50});
-}
-
 /**
  * Code for creep harvester
  */

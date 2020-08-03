@@ -26,7 +26,8 @@ function BasicBlocks() {
         "Seller",
         "Upgrader",
         "Repairer",
-        "Harvester"
+        "Harvester",
+        "Helper"
     ];
 }
 
