@@ -1,166 +1,94 @@
-// Main start here
+// Main.js
 
-/**
- * Generate randim string
- * @param {number} length - length of string
- * @return {string}
- */
-function GenerateString(length) {
-    const chars = '0123456789abcdefghij';
+class Creep {
+    /**
+     * @param {{}} options 
+     */
+    constructor(options) {
+        if (options == null) options = {};
+        const move = {
+            heuristicWeight: 1.2, 
+            ignoreCreeps: true, 
+            reusePath: 30,
+        };
 
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars[Math.floor(Math.random() * chars.length)];
+        this.name = `Viking | ${options.name} | g[${_.generateString(10)}]` || `Viking g[${_.generateString(10)}]`;
+        this.role = options.target || 'creep';
+        this.move = options.move || move;
+        this.game = options.game || null;
+        this.state = options.state || null;
+        this.body = options.body || null;
     }
-    return result;
 }
 
-/**
- * Return direction for defence
- * @param {string} direction direction where is hostile creep
- * @return {string}
- */
-function DefenceDirection(direction) {
-    switch (direction) {
-        case TOP:
-            return BOTTOM;
-            break;
-        case TOP_LEFT:
-            return BOTTOM_RIGHT;
-            break;
-        case LEFT:
-            return RIGHT;
-            break;
-        case BOTTOM_LEFT:
-            return TOP_RIGHT;
-            break;
-        case BOTTOM:
-            return TOP;
-            break;
-        case BOTTOM_RIGHT:
-            return TOP_LEFT;
-            break;
-        case RIGHT:
-            return LEFT;
-            break;
-        case TOP_RIGHT:
-            return BOTTOM_LEFT;
-            break;
+class Room {
+    /**
+     * @param {{}} options 
+     */
+    constructor(options) {
+        if (options == null) return 'Need room options';
+
+        this.name = options.name;
+        this.target = options.target;
+        this.autobuilder = options.autobuilder;
     }
 }
 
 /**
- * Return priority of part
- * @param {BodyPartConstant} body - body of creep
- * @return {number} Priority of this part
- * @author Sergey from Screeps Slack (code corrected)
+ * @param {{}} options 
+ * @param {number} availableEnergy
+ * @return {[]} body
+ * @note thank Sergey from Slack
  */
-function bodyPriority(body) {
-    switch (body) {
-        case HEAL:
-            return -1;
-            break;
-        case MOVE:
-            return 2;
-            break;
-        case RANGED_ATTACK:
-            return 1;
-            break;
-        case ATTACK:
-            return 0;
-            break;
-        case WORK:
-            return 7;
-            break;
-        case TOUGH:
-            return 10;
-            break;
-        default:
-            return 5;
-            break;
-    }
-}
+function generateBody(options, availableEnergy) {
+    if (options == null) return 'Need room options';
 
-/**
- * Return creep's body part for spawn
- * @param {Object} room
- * @param {Array} pattern
- * @param {int} count
- * @param {Object} optional
- * @author Sergey from Screeps Slack (code corrected)
- */
-function getBodyParts(room, pattern, count, optional) {
-    const roads = optional.isForRoad || false; // Move per 1 body part or move per 2 body parts
-    let moveBoost = optional.moveBoost || null; // Will be used boosts?
-    const priority = {}; // Unused
-    const skipCarry = optional.skipCarry || false; // Skip carry parts?
-    const mustBe = optional.mustBe || []; // Important body parts. For example result will be [ATTACK, CARRY, CARRY, MOVE, MOVE] with pattern [CARRY]
-    const moveParts = optional.moveParts; // Add MOVE in creep's dody?
-    if (moveBoost &&
-        !_.includes([RESOURCE_ZYNTHIUM_OXIDE, RESOURCE_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE], moveBoost)) {
-        logger.logWarning(MODULE_NAME, `Incorect parameter moveBoost: ${moveBoost}`);
-        moveBoost = null;
-    }
-    let step = 1;
-    if (roads) {
-        step = 2;
-    }
-    step *= (optional && optional.moveEach) || 1;
-    if (moveBoost) {
-        step +=
-            BOOSTS.move[moveBoost].fatigue - 1;
-    }
-    let index = 0;
-    let moveIndex = 0;
-    let availableEnergy = room.energyCapacityAvailable;
-    if (optional && optional.maxEnergy) {
-        availableEnergy = Math.min(optional.maxEnergy, availableEnergy);
-    }
-    let body = [];
+    const roads = options.isForRoad || false;
+    const skipCarry = options.skipCarry || false;
+    const mustBe = options.mustBe || [];
+    const moveParts = options.moveParts || true;
+    const moveEach = options.moveEach || 1;
+    const maxEnergy = options.maxEnergy || 50000;
+    const priority = {};
+
+    let step = ((roads) ? 2 : 1) *= moveEach;
+    let index = 0, moveIndex = 0;
+    
+    if (maxEnergy != 50000) availableEnergy = Math.min(maxEnergy, availableEnergy);
+
+    const body = [];
     mustBe.forEach(b => {
-        if ((!optional || !optional.withoutMove) && (b != CARRY || !skipCarry)) {
+        if ((moveParts === true) && (b != CARRY || !skipCarry)) {
             if (moveIndex == 0) {
                 availableEnergy -= BODYPART_COST[MOVE];
-                if (availableEnergy < BODYPART_COST[b]) {
-                    return false;
-                }
-                if (moveParts) body.push(MOVE);
+                if (availableEnergy < BODYPART_COST[b]) return false;
+                body.push(MOVE);
             }
             moveIndex = (moveIndex + 1) % step;
         }
         availableEnergy -= BODYPART_COST[b];
-        if (availableEnergy < 0) {
-            return false;
-        }
+        if (availableEnergy < 0) return false;
         body.push(b);
         return;
     });
     while (body.length < 50 && count > 0) {
-        if ((!optional || !optional.withoutMove) && (pattern[index] != CARRY || !skipCarry)) {
+        if ((moveParts === true) && (pattern[index] != CARRY || !skipCarry)) {
             if (moveIndex == 0) {
                 availableEnergy -= BODYPART_COST[MOVE];
-                if (availableEnergy < BODYPART_COST[pattern[index]]) {
-                    break;
-                }
+                if (availableEnergy < BODYPART_COST[pattern[index]]) break;
                 if (moveParts) body.push(MOVE);
             }
             moveIndex = (moveIndex + 1) % step;
         }
         availableEnergy -= BODYPART_COST[pattern[index]];
-        if (availableEnergy < 0) {
-            break;
-        }
+        if (availableEnergy < 0) break;
         body.push(pattern[index]);
         count--;
         index = (index + 1) % pattern.length;
     }
-    return body.sort((a, b) => (priority[b] || bodyPriority(b)) - (priority[a] || bodyPriority(a)));
+    return body.sort((a, b) => (priority[b] || _screeps.bodyPriority(b)) - (priority[a] || _screeps.bodyPriority(a)));
 }
 
-/**
- * Spawn creeps in all rooms
- * @param {Object} room
- */
 function spawnCreep(room) {
     for (i in Memory.queue) {
         if (Memory.queue[i] && Memory.queue[i].Room && room.name == Memory.queue[i].Room) {
@@ -188,11 +116,6 @@ function spawnCreep(room) {
     }
 }
 
-/**
- * Start spawn creep
- * @param {Object} spawn
- * @param {string} role
- */
 function spawnProcess(spawn, role, room) {
     if (spawn.spawning == null) {
 
@@ -266,47 +189,6 @@ function spawnProcess(spawn, role, room) {
     }
 }
 
-const INFORMAION = {
-    MY_USERNAME: 'JOURLOY',
-    YOUR_USERNAME: 'soon',
-    ROOM_SIGN: 'VIKING',
-}
-
-const COLORS = {
-    CONSTRUCTION_SITE: '#78997a',
-    ENERGY: '#fee56d'
-}
-
-/**
- * Define where start bot
- * @return {boolean}
- */
-function publicServer() {
-    return Game.shard.name.includes('shard');
-}
-
-const moveParams = {
-    heuristicWeight: 1.2, 
-    ignoreCreeps: false, 
-    reusePath: 30,
-}
-
-module.exports.loop = function () {
-    SetMemory();
-    RoomStats();
-    CreepManager();
-    tower.control();
-    
-    if (publicServer()) {
-        if (Game.cpu.bucket > 5000) Game.cpu.generatePixel();
-    }
-
-    for (i in Game.rooms) {
-        let room = Game.rooms[i];
-
-        if (room.controller && room.controller.my) {
-            Autobuild(room);
-            spawnCreep(room);
-        }
-    }
+module.exports.loop = function() {
+    if (_.public && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
 };
