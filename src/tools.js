@@ -2,10 +2,6 @@
 
 const _ = {
     /**
-     * @return {boolean}
-     */
-    public: () => Game.shard.name.includes('shard'),
-    /**
      * @param {number} length 
      */
     generateString: function(length) {
@@ -17,6 +13,9 @@ const _ = {
 }
 
 const _screeps = {
+    public: function() {
+        return Game.shard.name.includes('shard')
+    },
     information: function() {
         return {
             username: {
