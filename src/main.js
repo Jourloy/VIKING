@@ -190,5 +190,5 @@ function spawnProcess(spawn, role, room) {
 }
 
 module.exports.loop = function() {
-    if (_.public && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
+    if (_screeps.public && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
 };
