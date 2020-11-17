@@ -16,26 +16,6 @@ const _screeps = {
     public: function() {
         return Game.shard.name.includes('shard')
     },
-    information: function() {
-        return {
-            username: {
-                my: 'JOURLOY',
-                your: 'soon'
-            },
-            roomSign: 'VIKING',
-        }
-    },
-    colors: function() {
-        return {
-            CONSTRUCTION_SITE: '#78997a',
-            RESOURCE_ENERGY: '#fee56d'
-        }
-    },
-    friends: function() {
-        return [
-            'JOURLOY',
-        ]
-    },
     defenceDirection: function(direction) {
         switch (direction) {
             case TOP: return BOTTOM;
