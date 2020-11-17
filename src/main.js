@@ -1,6 +1,6 @@
 // Main.js
 
-class Creep {
+class VikingCreep {
     /**
      * @param {{}} options 
      */
@@ -13,15 +13,17 @@ class Creep {
         };
 
         this.name = `Viking | ${options.name} | g[${_.generateString(10)}]` || `Viking g[${_.generateString(10)}]`;
-        this.role = options.target || 'creep';
+        this.role = options.role || 'creep';
         this.move = options.move || move;
         this.game = options.game || null;
         this.state = options.state || null;
         this.body = options.body || null;
+
+        creepArray.push(this);
     }
 }
 
-class Room {
+class VikingRoom {
     /**
      * @param {{}} options 
      */
@@ -51,7 +53,8 @@ function generateBody(options, availableEnergy) {
     const maxEnergy = options.maxEnergy || 50000;
     const priority = {};
 
-    let step = ((roads) ? 2 : 1) *= moveEach;
+    let step = (roads === true) ?2 :1;
+    step *= moveEach;
     let index = 0, moveIndex = 0;
     
     if (maxEnergy != 50000) availableEnergy = Math.min(maxEnergy, availableEnergy);
@@ -190,5 +193,6 @@ function spawnProcess(spawn, role, room) {
 }
 
 module.exports.loop = function() {
-    if (_screeps.public && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
+    if (_screeps.public() && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
+    runCreeps()
 };
