@@ -11,15 +11,15 @@ function creepSay(creep, aim) {
 
     if (aim === 'waiting') {
         const text = ['WAIT', 'WAIT.', 'WAIT..', 'WAIT...'];
-        creep.game.say([Game.time%text.length]);
+        creep.say([Game.time%text.length]);
     } else if (aim == 'searching') {
         const text = ['SEARCH', 'SEARCH.', 'SEARCH..', 'SEARCH...'];
-        creep.game.say([Game.time%text.length]);
-    } else creep.game.say(aim);
+        creep.say([Game.time%text.length]);
+    } else creep.say(aim);
 }
 
 function creepUpgrade(creep) {
-    if (creep.game.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.game.moveTo(creep.room.controller, creep.move);
+    if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) creep.moveTo(creep.room.controller, creep.move);
 }
 
 function creepRepair(creep) {
@@ -31,11 +31,11 @@ function creepBuild(creep) {
 }
 
 function creepRefill(creep, structure) {
-    if (creep.game.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.game.moveTo(structure, creep.move);
+    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(structure, creep.move);
 }
 
 function creepFindActiveSource(creep) {
-    const room = Game.rooms[creep.game.room.name];
+    const room = Game.rooms[creep.room.name];
     const sources = room.find(FIND_SOURCES_ACTIVE);
     if (sources[0] != null) return sources[0].id;
     else return false;
