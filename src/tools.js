@@ -1,9 +1,6 @@
 // Tools.js
 
 const _ = {
-    /**
-     * @param {number} length 
-     */
     generateString: function(length) {
         const chars = '0123456789abcdefghij';
         let result = '';
@@ -38,5 +35,17 @@ const _screeps = {
             case TOUGH: return 10;
             default: return 5;
         }
+    }
+}
+
+const _console = {
+    log: (message) => {
+        console.log(`<p style="color: grey">[LOG] ${message}</p>`)
+    },
+    warning: (message) => {
+        console.log(`<p style="color: orange">[WARNING] ${message}</p>`)
+    },
+    error: (message) => {
+        console.log(`<p style="color: red">[ERROR] ${message}</p>`)
     }
 }
