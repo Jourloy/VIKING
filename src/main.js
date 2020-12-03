@@ -1,9 +1,6 @@
 // Main.js
 
 class VikingCreep {
-    /**
-     * @param {{}} options 
-     */
     constructor(options) {
         if (options == null) options = {};
         const move = {
@@ -15,33 +12,27 @@ class VikingCreep {
         this.name = `Viking | ${options.name} | g[${_.generateString(10)}]` || `Viking g[${_.generateString(10)}]`;
         this.role = options.role || 'creep';
         this.move = options.move || move;
-        this.game = options.game || null;
         this.state = options.state || null;
         this.body = options.body || null;
 
         creepArray.push(this);
+        roles.push(this.role);
     }
 }
 
 class VikingRoom {
-    /**
-     * @param {{}} options 
-     */
     constructor(options) {
         if (options == null) return 'Need room options';
 
         this.name = options.name;
         this.target = options.target;
         this.autobuilder = options.autobuilder;
+        this.information = options.information || null;
+
+        roomsArray.push(this);
     }
 }
 
-/**
- * @param {{}} options 
- * @param {number} availableEnergy
- * @return {[]} body
- * @note thank Sergey from Slack
- */
 function generateBody(options, availableEnergy) {
     if (options == null) return 'Need room options';
 
