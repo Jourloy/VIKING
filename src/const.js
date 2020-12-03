@@ -1,4 +1,6 @@
 const creepArray = [];
+const roomsArray = [];
+const roles = [];
 
 const information = {
     username: {
