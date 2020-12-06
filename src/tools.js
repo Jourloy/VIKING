@@ -1,6 +1,6 @@
 // Tools.js
 
-const _ = {
+const _tools = {
     generateString: function(length) {
         const chars = '0123456789abcdefghij';
         let result = '';
