@@ -1,62 +1,69 @@
 // roles.js
 
-function runCreeps() {
-    for (let i in Game.creeps)
-        for (let j in creepArray)
-            if (creepArray[j].role === Game.creeps[i].memory.role) creepArray[j].run(Game.creeps[i]);
+const creepStatistic = {
+    amountIsLive: {}
 }
 
-function calculatingCreeps() {
-    for (let i in roomsArray) {
-        const room = roomsArray[i];
-        if (room.information == null) {
-            _console.error(`Room [${room.name}] don't have information`);
-            return;
-        }
-        if (room.information.state == true) return;
-
-        switch(roles) {
-            case 'miner':
-                if (room.information.controller.level > 1) room.information.amountCreeps
+function runCreeps() {
+    for (let i in Game.creeps) {
+        for (let j in creepArray) {
+            if (creepArray[j].role === Game.creeps[i].memory.role) creepArray[j].run(Game.creeps[i]);
         }
     }
 }
 
-function CalculateAmountOfCreeps(roomInfo, role) {
-    const room = Game.rooms[roomInfo.RoomName]
-    if (role == 'Miner') {
-        if (roomInfo.Room.Controller.Level > 1) return roomInfo.Room.Sources.Amount;
-        else return 0;
-    } else if (role == 'Transporter') {
-        if (roomInfo.Room.Controller.Level > 1) return 2;
-    } else if (role == 'Upgrader') {
-        if (roomInfo.Room.Controller.Level > 1 && roomInfo.Room.Controller.Level < 8) return 4;
-        else if (roomInfo.Room.Controller.Level == 8) return 1
-        else return 0;
-    } else if (role == 'Builder') {
-        if (roomInfo.Room.Controller.Level > 1) {
-            let constructionSites = roomInfo.Room.Other.ConstructionSites.Amount;
-            if (constructionSites == 0) return 0;
-            else if (constructionSites > 0 && constructionSites < 2) return 1;
-            else if (constructionSites >= 2) return 2;
-        } else return 0;
-    } else if (role == 'MineralMiner') {
-        return 0;
-        if (roomInfo.Room.Controller.Level > 1) {
-            const mineralRegeneration = roomInfo.Room.Minerals.MineralRegeneration;
-            const extractor = roomInfo.Room.Minerals.Extractor;
-            if (mineralRegeneration < 20 && extractor.length > 0) return 1;
-            else return 0;
-        } else return 0;
-    } else if (role == 'Harvester') {
-        if (roomInfo.Room.Controller.Level < 3) return 10;
-        else if (roomInfo.Room.Controller.Level >= 3 && Memory.room[room.name + ".amountIsLive.Transporter"] == 0) return 2
-        else return 0;
-    } else if (role == 'Repairer') {
-        if (roomInfo.Room.Controller.Level > 1) return 2;
-        else return 0
-    } else if (role == 'Helper') {
-        if (roomInfo.Room.Other.AmountOfCreeps == 0) return 2;
-        else return 0;
+function spawnCreeps() {
+
+    amountCreepsIsLive();
+
+    for (i in roomsArray) {
+        const room = roomsArray[i];
+
+        for (i in room.information.amountCreeps) {
+            if (room.information.amountCreeps[i] > creepStatistic.amountIsLive[room.name + '.' + i]) queue.push({ role: i, room: room.name });
+        }
+
+        spawns = Game.rooms[room.name].find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_SPAWN);
+            }
+        });
+
+        
+
+        for (i in queue) {
+            if (spawns[0].spawning == null) spawnProcess(spawns[0], queue[i].role, Game.rooms[queue[i].room]);
+        }
+    }
+}
+
+function amountCreepsIsLive() {
+    for (let i in Game.rooms) {
+        let room = Game.rooms[i];
+        if (room.controller && room.controller.my) {
+            for (let j in roles) creepStatistic.amountIsLive[room.name + "." + roles[j]] = 0;
+        }
+    }
+
+    for (let z in Game.rooms) {
+        let room = Game.rooms[z];
+        if (room.controller && room.controller.my) {
+            for (let i in Game.creeps) {
+                let creep = Game.creeps[i];
+                if (room.name == creep.memory.room) creepStatistic.amountIsLive[room.name + "." + creep.memory.role]++;
+            }
+
+            spawns = room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_SPAWN);
+                }
+            });
+
+            for (i in spawns) {
+                if (spawns[i].spawning != null && spawns[i].spawning.remainingTime > spawns[i].spawning.needTime - 10) {
+                    creepStatistic.amountIsLive[room.name + "." + spawns[i].memory.spawningCreep]++;
+                }
+            }
+        }
     }
 }
