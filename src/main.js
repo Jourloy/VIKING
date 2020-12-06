@@ -9,7 +9,7 @@ class VikingCreep {
             reusePath: 30,
         };
 
-        this.name = `Viking | ${options.name} | g[${_.generateString(10)}]` || `Viking g[${_.generateString(10)}]`;
+        this.name = `Viking | ${options.name} | g[${_tools.generateString(10)}]` || `Viking g[${_tools.generateString(10)}]`;
         this.role = options.role || 'creep';
         this.move = options.move || move;
         this.state = options.state || null;
@@ -27,7 +27,7 @@ class VikingRoom {
         this.name = options.name;
         this.target = options.target;
         this.autobuilder = options.autobuilder;
-        this.information = options.information || null;
+        this.information = options.information || {};
 
         roomsArray.push(this);
     }
@@ -43,6 +43,8 @@ function generateBody(options, availableEnergy) {
     const moveEach = options.moveEach || 1;
     const maxEnergy = options.maxEnergy || 50000;
     const priority = {};
+    const pattern = options.pattern;
+    let count = options.count || 50;
 
     let step = (roads === true) ?2 :1;
     step *= moveEach;
@@ -83,100 +85,28 @@ function generateBody(options, availableEnergy) {
     return body.sort((a, b) => (priority[b] || _screeps.bodyPriority(b)) - (priority[a] || _screeps.bodyPriority(a)));
 }
 
-function spawnCreep(room) {
-    for (i in Memory.queue) {
-        if (Memory.queue[i] && Memory.queue[i].Room && room.name == Memory.queue[i].Room) {
-            const roleCreep = Memory.queue[i].Role;
-
-            const info = GetRoomInformation(room.name);
-
-            const amountSpawns = info.Room.Spawns.Amount;
-            const firstSpawn = Game.getObjectById(info.Room.Spawns.FirstSpawn);
-            const secondSpawn = Game.getObjectById(info.Room.Spawns.SecondSpawn);
-            const thirdSpawn = Game.getObjectById(info.Room.Spawns.ThirdSpawn);
-
-            if (firstSpawn && amountSpawns > 1) {
-                if (firstSpawn && firstSpawn.spawning == null) {
-                    spawnProcess(firstSpawn, roleCreep, room);
-                } else if (secondSpawn && secondSpawn.spawning == null) {
-                    spawnProcess(secondSpawn, roleCreep, room);
-                } else if (thirdSpawn && thirdSpawn.spawning == null) {
-                    spawnProcess(thirdSpawn, roleCreep, room);
-                }
-            } else if (firstSpawn && firstSpawn.spawning == null) {
-                spawnProcess(firstSpawn, roleCreep, room);
-            }
-        }
-    }
-}
-
 function spawnProcess(spawn, role, room) {
     if (spawn.spawning == null) {
 
-        let name;
-        const randomNumber = Game.time%5000;
+        let creep;
 
-        let spawnInfo = null;
-        let body = null;
-
-        if (creepInfo[role]) spawnInfo = creepInfo[role];
-        if (spawnInfo != null) {
-            let withoutMove;
-            if (spawnInfo.moveParts == true) withoutMove = false
-            else withoutMove = true;
-            let optional = {
-                role: spawnInfo.role,
-                isForRoad: spawnInfo.isForRoad,
-                moveBoost: spawnInfo.useBoost,
-                skipCarry: spawnInfo.skipCarry,
-                mustBe: spawnInfo.mustBe,
-                moveParts: spawnInfo.moveParts,
-                withoutMove: withoutMove
+        for (i in creepArray) {
+            if (creepArray[i].role === role) {
+                creep = creepArray[i];
+                break;
             }
-            body = getBodyParts(room, spawnInfo.pattern, spawnInfo.count, optional);
-
-            name = `${spawnInfo.name} | id:${randomNumber}`;
         }
+        
+        const body = generateBody(creep.body, spawn.room.energyCapacityAvailable);
 
-        if (creepInfo[role] && creepInfo[role].role == 'Miner') {
-            let number;
-
-            const miners = spawn.room.find(FIND_MY_CREEPS, {
-                filter: (creep) => {
-                    return creep.memory.role == 'Miner';
-                }
-            });
-
-            if (miners.length > 0) {
-                if (miners[0].memory.number == 1) number = 2;
-                else number = 1;
-            } else number = 1;
-
-            if (spawn.spawnCreep(body, name, { memory: { role: role, room: room.name, number: number } }) == 0) {
-                logging("Spawn start spawn creep [" + role + "] in " + spawn.room.name)
-                for (i in Memory.queue) {
-                    if (Memory.queue[i] && Memory.queue[i].Role == role && Memory.queue[i].Room == spawn.room.name) {
-                        let CreepSpawn = Memory.queue.slice(i, i + 1);
-                        let newList = [];
-                        for (i in Memory.queue) {
-                            if (Memory.queue[i] != CreepSpawn[0]) newList.push(Memory.queue[i])
-                        }
-                        Memory.queue = newList;
-                    }
-                }
-            }
-        } else if (creepInfo[role]) {
-            if (spawn.spawnCreep(body, name, { memory: { role: role, room: room.name } }) == 0) {
-                logging("Spawn start spawn creep [" + role + "] in " + spawn.room.name)
-                for (i in Memory.queue) {
-                    if (Memory.queue[i] && Memory.queue[i].Role == role && Memory.queue[i].Room == spawn.room.name) {
-                        let CreepSpawn = Memory.queue.slice(i, i + 1);
-                        let newList = [];
-                        for (i in Memory.queue) {
-                            if (Memory.queue[i] != CreepSpawn[0]) newList.push(Memory.queue[i])
-                        }
-                        Memory.queue = newList;
-                    }
+        if (spawn.spawnCreep(body, creep.name, { memory: { role: creep.role, room: room.name } }) === 0) {
+            _console.log("Spawn start spawn creep [" + role + "] in " + room.name)
+            for (i in queue) {
+                if (queue[i] && queue[i].Role == role && queue[i].Room == spawn.room.name) {
+                    let CreepSpawn = queue.slice(i, i + 1);
+                    let newList = [];
+                    for (i in queue) if (queue[i] != CreepSpawn[0]) newList.push(queue[i])
+                    queue = newList;
                 }
             }
         }
@@ -185,5 +115,7 @@ function spawnProcess(spawn, role, room) {
 
 module.exports.loop = function() {
     if (_screeps.public() && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
+    CreateRooms()
+    spawnCreeps()
     runCreeps()
 };
