@@ -11,5 +11,5 @@ const miner = new VikingCreep({
 });
 
 miner.run = (creep) => {
-    creepSay(creep, this.role);
+    // Logic
 }
