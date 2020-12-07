@@ -115,7 +115,11 @@ function spawnProcess(spawn, role, room) {
 
 module.exports.loop = function() {
     if (_screeps.public() && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
-    CreateRooms()
+    
+    
+    memory();
+
+    
     spawnCreeps()
     runCreeps()
 };
