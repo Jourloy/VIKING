@@ -1,9 +1,5 @@
 // roles.js
 
-const creepStatistic = {
-    amountIsLive: {}
-}
-
 function runCreeps() {
     for (let i in Game.creeps) {
         for (let j in creepArray) {
@@ -16,23 +12,22 @@ function spawnCreeps() {
 
     amountCreepsIsLive();
 
-    for (i in roomsArray) {
-        const room = roomsArray[i];
+    for (i in Memory.rooms) {
+        const room = Memory.rooms[i];
 
-        for (i in room.information.amountCreeps) {
-            if (room.information.amountCreeps[i] > creepStatistic.amountIsLive[room.name + '.' + i]) queue.push({ role: i, room: room.name });
+        for (j in room.information.amountCreeps) {
+            if (room.information.amountCreeps[j] > room.information.amountCreepsIsLive[j]) Memory.queue.push({ role: j, room: i });
         }
 
-        spawns = Game.rooms[room.name].find(FIND_STRUCTURES, {
+        spawns = Game.rooms[i].find(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_SPAWN);
             }
         });
 
-        
-
-        for (i in queue) {
-            if (spawns[0].spawning == null) spawnProcess(spawns[0], queue[i].role, Game.rooms[queue[i].room]);
+        for (j in Memory.queue) {
+            console.log(Memory.queue[j].role);
+            if (spawns[0].spawning == null) spawnProcess(spawns[0], Memory.queue[j].role, Game.rooms[Memory.queue[j].room]);
         }
     }
 }
@@ -41,7 +36,9 @@ function amountCreepsIsLive() {
     for (let i in Game.rooms) {
         let room = Game.rooms[i];
         if (room.controller && room.controller.my) {
-            for (let j in roles) creepStatistic.amountIsLive[room.name + "." + roles[j]] = 0;
+            for (let j in roles) {
+                Memory.rooms[room.name].information.amountCreepsIsLive[roles[j]] = 0;
+            }
         }
     }
 
@@ -50,7 +47,7 @@ function amountCreepsIsLive() {
         if (room.controller && room.controller.my) {
             for (let i in Game.creeps) {
                 let creep = Game.creeps[i];
-                if (room.name == creep.memory.room) creepStatistic.amountIsLive[room.name + "." + creep.memory.role]++;
+                if (room.name == creep.memory.room) Memory.rooms[room.name].information.amountCreepsIsLive[creep.memory.role]++;
             }
 
             spawns = room.find(FIND_STRUCTURES, {
@@ -61,7 +58,7 @@ function amountCreepsIsLive() {
 
             for (i in spawns) {
                 if (spawns[i].spawning != null && spawns[i].spawning.remainingTime > spawns[i].spawning.needTime - 10) {
-                    creepStatistic.amountIsLive[room.name + "." + spawns[i].memory.spawningCreep]++;
+                    Memory.rooms[spawns[i].room.name].information.amountCreepsIsLive[Game.creeps[spawns[i].spawning.name]]++;
                 }
             }
         }
