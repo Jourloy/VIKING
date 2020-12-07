@@ -1,4 +1,4 @@
-// Tools.js
+// tools.js
 
 const _tools = {
     generateString: function(length) {
