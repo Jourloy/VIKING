@@ -28,7 +28,6 @@ worker.run = (creep) => {
         if (creep.memory.train == null || creep.memory.train.state === false) {
             if (creep.store.getUsedCapacity() === 0) creep.memory.mode = 0;
             else if (creep.store.getUsedCapacity() === creep.store.getCapacity()) creep.memory.mode = 1;
-            console.log(creep.getResource(creep))
             if (creep.memory.mode === 0) creep.getResource();
             else if (creep.memory.mode === 1) workerLogic(creep);
         } else {
