@@ -133,45 +133,19 @@ Creep.prototype.upgradeJR = function () {
     if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) creep.travelTo(creep.room.controller, creep.move);
 };
 
-class Find {
-    static findActiveSource(room) {
-        const room = Game.rooms[creep.room.name];
-        const sources = room.find(FIND_SOURCES_ACTIVE);
-        if (sources[0] != null) return sources[0].id;
-        else return false;
-    }
-}
-
 Creep.prototype.findHostileCreeps = function () {
     const creep = this;
-    return creep.room.find(FIND_HOSTILE_CREEPS, {
+    return creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
         filter: (creep) => {
-            return (!_screeps.friends().includes(creep.owner.username) && creep.owner.username !== 'JOURLOY')
+            return (!friends.includes(creep.owner.username) && creep.owner.username !== 'JOURLOY');
         }
     })
 };
 
-Creep.prototype.findActiveSource = function (room) {
-    if (!room) room = creep.room;
-    return Find.findActiveSource(room);
+Creep.prototype.findActiveSource = function () {
+    const creep = this;
+    return creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
 };
-
-class BasicFunctions {
-    static getResource(creep, resource) {
-        if (resource == null) resource == RESOURCE_ENERGY;
-
-        if (resource === RESOURCE_ENERGY) {
-            console.log("@@")
-
-            switch (creep.memory.role) {
-                case 'worker':
-                    const activeSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-
-                    if (creep.harvest(activeSource) == ERR_NOT_IN_RANGE) creep.travelTo(source);
-            }
-        }
-    }
-}
 
 Creep.prototype.getResource = function (resource) {
     const creep = this;
