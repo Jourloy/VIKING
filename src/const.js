@@ -1,5 +1,3 @@
-// const.js
-
 const creepArray = [];
 let roomsArray = [];
 const roles = [];
@@ -18,4 +16,4 @@ const colors = {
     RESOURCE_ENERGY: '#fee56d'
 }
 
-const friends = ['JOURLOY', 'Kartinka', 'Kotyara'];
+const friends = ['JOURLOY'];
