@@ -1,30 +1,9 @@
 // creepProto.js
 
-Creep.prototype.buildJR = function (options) {
+Creep.prototype.buildJR = function (structure) {
     const creep = this;
 
-    const cs = room.find(FIND_CONSTRUCTION_SITES);
-    let constructionSites = [];
-
-    if (cs.length > 0) {
-        for (i in cs) constructionSites.push(cs[i].id);
-        amountConstructionSites = cs.length;
-
-        if (room.controller && room.controller.my) {
-            const spawns = room.find(FIND_MY_SPAWNS);
-            const spawn = spawns[0];
-
-            constructionSites = constructionSites.sort(function (a, b) {
-                a = Game.getObjectById(a);
-                b = Game.getObjectById(b);
-                const result = spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b);
-                if (result === 0) return b.progress - a.progress;
-                return result;
-            });
-        }
-    }
-
-    if (creep.build(Game.getObjectById(constructionSites[0])) === ERR_NOT_IN_RANGE) creep.travelTo(Game.getObjectById(constructionSites[0]));
+    if (creep.build(structure) === ERR_NOT_IN_RANGE) creep.travelTo(structure);
 
     return 0;
 };
@@ -133,11 +112,20 @@ Creep.prototype.upgradeJR = function () {
     if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) creep.travelTo(creep.room.controller, creep.move);
 };
 
+class Find {
+    static findActiveSource(room) {
+        const room = Game.rooms[creep.room.name];
+        const sources = room.find(FIND_SOURCES_ACTIVE);
+        if (sources[0] != null) return sources[0].id;
+        else return false;
+    }
+}
+
 Creep.prototype.findHostileCreeps = function () {
     const creep = this;
     return creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
         filter: (creep) => {
-            return (!friends.includes(creep.owner.username) && creep.owner.username !== 'JOURLOY');
+            return (!friends.includes(creep.owner.username) && creep.owner.username !== 'JOURLOY')
         }
     })
 };
@@ -154,10 +142,12 @@ Creep.prototype.getResource = function (resource) {
     if (resource === RESOURCE_ENERGY) {
 
         switch (creep.memory.role) {
+            case 'upgrader':
             case 'worker':
                 const activeSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
 
                 if (creep.harvest(activeSource) == ERR_NOT_IN_RANGE) creep.travelTo(activeSource);
+                break;
         }
     }
     return 0;
@@ -171,7 +161,8 @@ Creep.prototype.refillJR = function () {
             return strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity());
         }
     });
-
+    const spawns = creep.room.find(FIND_MY_SPAWNS);
+    const spawn = spawns[0];
     structures = structures.sort(function (a, b) { return spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b); });
 
     if (creep.transfer(structures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.travelTo(structures[0]);
