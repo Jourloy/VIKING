@@ -9,7 +9,7 @@ class VikingCreep {
             reusePath: 30,
         };
 
-        this.name = `Viking | ${options.name} | g[${_tools.generateString(10)}]` || `Viking g[${_tools.generateString(10)}]`;
+        this.name = `Viking | ${options.name} | ` || `Viking | Prototype | s`;
         this.role = options.role || 'creep';
         this.move = options.move || move;
         this.state = options.state || null;
@@ -99,7 +99,7 @@ function spawnProcess(spawn, role, room) {
         
         const body = generateBody(creep.body, spawn.room.energyCapacityAvailable);
 
-        if (spawn.spawnCreep(body, creep.name, { memory: { role: creep.role, room: room.name } }) === 0) {
+        if (spawn.spawnCreep(body, `${creep.name}${_tools.generateString(15)}`, { memory: { role: creep.role, room: room.name } }) === 0) {
             _console.log("Spawn start spawn creep [" + role + "] in " + room.name)
             for (i in queue) {
                 if (queue[i] && queue[i].Role == role && queue[i].Room == spawn.room.name) {
@@ -109,17 +109,24 @@ function spawnProcess(spawn, role, room) {
                     queue = newList;
                 }
             }
+        } else {
+            console.log(spawn.spawnCreep(body, creep.name, { memory: { role: creep.role, room: room.name } }))
         }
     }
 }
 
 module.exports.loop = function() {
     if (_screeps.public() && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
-    
-    
-    memory();
 
-    
+    for (i in Memory.creeps) {
+        if (!Game.creeps[i]) delete Memory.creeps[i]
+    }
+
+    CreateRooms()
     spawnCreeps()
     runCreeps()
+    for (i in roomsArray) {
+        const room = Game.rooms[roomsArray[i].name];
+        Autobuild(room)
+    }
 };
