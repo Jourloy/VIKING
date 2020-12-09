@@ -1,5 +1,3 @@
-// warrior.js
-
 const warrior = new VikingCreep({
     role: 'warrior',
     body: {
@@ -11,11 +9,19 @@ warrior.run = (creep) => {
     if (Game.flags.fastAttack) {
         if (Game.flags.fastAttack.room == null || creep.room !== Game.flags.fastAttack.room) creep.travelTo(Game.flags.fastAttack);
         else {
-            const hostileCreep = creep.findHostileCreeps();
-
-            if (creep.attack(hostileCreep) === ERR_NOT_IN_RANGE) creep.travelTo(hostileCreep)
+            const hostileCreeps = creep.findHostileCreeps();
+            if (hostileCreeps != null) {
+                creep.say('VIKINGS', true)
+                if (creep.attack(hostileCreeps) === ERR_NOT_IN_RANGE) creep.travelTo(hostileCreeps);
+            } else {
+                creep.say('VIKINGS', true)
+                const structure = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
+                    filter: (strc) => {
+                        return (strc.structureType !== STRUCTURE_CONTROLLER);
+                    }
+                });
+                if (creep.attack(structure) === ERR_NOT_IN_RANGE) creep.travelTo(structure);
+            }
         }
-    } else {
-        creep.suicide()
     }
 }
