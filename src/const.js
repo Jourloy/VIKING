@@ -1,3 +1,5 @@
+// const.js
+
 const creepArray = [];
 let roomsArray = [];
 const roles = [];
@@ -17,3 +19,13 @@ const colors = {
 }
 
 const friends = ['JOURLOY'];
+
+const ERR_ROOM_WITHOUT_CONTROLLER = 'ERR_ROOM_WITHOUT_CONTROLLER';
+const ERR_ROOM_HOSTILE_CONTROLLER = 'ERR_ROOM_HOSTILE_CONTROLLER';
+const ERR_ROOM_WAS_CREATED = 'ERR_ROOM_WAS_CREATED';
+const ERR_ROOM_NOT_FOUND = 'ERR_ROOM_NOT_FOUND';
+
+const EXIT_TOP = 1;
+const EXIT_RIGHT = 3;
+const EXIT_BOTTOM = 5;
+const EXIT_LEFT = 7;
