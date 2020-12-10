@@ -1,3 +1,5 @@
+// warrior.js
+
 const warrior = new VikingCreep({
     role: 'warrior',
     body: {
