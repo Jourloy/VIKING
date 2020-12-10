@@ -1,3 +1,5 @@
+// upgrader.js
+
 const upgrader = new VikingCreep({
     role: 'upgrader',
     body: {
