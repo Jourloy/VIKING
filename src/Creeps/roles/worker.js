@@ -1,7 +1,6 @@
 // worker.js
 
 function workerLogic(creep) {
-
     const cs = creep.room.find(FIND_CONSTRUCTION_SITES);
     let structures = creep.room.find(FIND_MY_STRUCTURES, {
         filter: (strc) => {
@@ -12,7 +11,10 @@ function workerLogic(creep) {
     const spawn = spawns[0];
     structures = structures.sort(function (a, b) { return spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b); });
 
+    const roomInfo = creep.findRoomInformation();
+
     if (structures.length > 0) creep.refillJR()
+    else if (roomInfo.structures.needRepair.length > 0) creep.repairJR(roomInfo.structures.needRepair[0]);
     else if (cs.length > 0) creep.buildJR(cs[0]);
     else creep.upgradeJR();
 }
