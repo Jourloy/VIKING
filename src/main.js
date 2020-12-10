@@ -108,8 +108,6 @@ function spawnProcess(spawn, role, room) {
                     queue = newList;
                 }
             }
-        } else {
-            console.log(spawn.spawnCreep(body, creep.name, { memory: { role: creep.role, room: room.name } }))
         }
     }
 }
@@ -118,12 +116,12 @@ module.exports.loop = function() {
     if (_screeps.public() && Game.cpu.bucket > 5000) Game.cpu.generatePixel();
 
     Tower.run();
+    Room.run();
 
     for (i in Memory.creeps) {
         if (!Game.creeps[i]) delete Memory.creeps[i]
     }
 
-    CreateRooms()
     spawnCreeps()
     runCreeps()
     for (i in roomsArray) {
