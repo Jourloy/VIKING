@@ -23,12 +23,14 @@ const worker = new VikingCreep({
     role: 'worker',
     body: {
         pattern: [WORK, CARRY],
+    },
+    moveParams: {
+        offRoad: true,
     }
 });
 worker.run = (creep) => {
     if (creep.memory.birthRoom == null) creep.memory.birthRoom = creep.room.name;
     else if (creep.room.name === creep.memory.birthRoom) {
-
         if (creep.memory.state == null) {
             if (creep.store.getUsedCapacity() === 0) creep.memory.mode = 0;
             else if (creep.store.getUsedCapacity() === creep.store.getCapacity()) creep.memory.mode = 1;
