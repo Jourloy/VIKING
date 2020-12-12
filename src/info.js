@@ -1,7 +1,7 @@
 /**
  *
  *
- * _____________________ SAMURAI _____________________
+ * _____________________ VIKING _____________________
  * @repository: https://github.com/Jourloy/VIKING
  * @author: JOURLOY
  *
