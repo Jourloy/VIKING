@@ -3,15 +3,18 @@
 class VikingCreep {
     constructor(options) {
         if (options == null) options = {};
-        const move = {
+        const moveParams = {
             heuristicWeight: 1.2, 
             ignoreCreeps: true, 
-            reusePath: 30,
+            reusePath: 50,
         };
+
+        const travelParams = {}
 
         this.name = `Viking | ${options.name} | ` || `Viking | Prototype | s`;
         this.role = options.role || 'creep';
-        this.move = options.move || move;
+        this.moveParams = options.moveParams || moveParams;
+        this.travelParams = options.travelParams || travelParams;
         this.state = options.state || null;
         this.body = options.body || null;
 
