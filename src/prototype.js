@@ -22,15 +22,15 @@ Creep.prototype.findRoomInformation = function() {
 Creep.prototype.buildJR = function(structure) {
     const creep = this;
 
-    if (creep.build(structure) === ERR_NOT_IN_RANGE) creep.travelTo(structure);
-
+    if (creep.build(structure) === ERR_NOT_IN_RANGE) creep.travelTo(structure, creep.travelParams);
     return 0;
 };
 
 Creep.prototype.repairJR = function(structure) {
     const creep = this;
 
-    if (creep.repair(structures) === ERR_NOT_IN_RANGE) creep.travelTo(structures);
+    if (creep.repair(structures) === ERR_NOT_IN_RANGE) creep.travelTo(structures, creep.travelParams);
+    return 0;
 };
 
 Creep.prototype.transferMe = function (options) {
@@ -95,6 +95,7 @@ Creep.prototype.transferMe = function (options) {
             }
         }
     }
+    return 0;
 };
 
 Creep.prototype.stateSay = function (state) {
@@ -109,12 +110,13 @@ Creep.prototype.stateSay = function (state) {
         const text = ['SEARCH', 'SEARCH.', 'SEARCH..', 'SEARCH...'];
         creep.say([Game.time % text.length]);
     } else creep.say(state);
+    return 0;
 };
 
 Creep.prototype.upgradeJR = function () {
     const creep = this;
-
-    if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) creep.travelTo(creep.room.controller, creep.move);
+    if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) creep.travelTo(creep.room.controller, creep.travelParams);
+    return 0;
 };
 
 Creep.prototype.findHostileCreeps = function () {
@@ -136,14 +138,19 @@ Creep.prototype.getResource = function (resource) {
     if (resource == null) resource = RESOURCE_ENERGY;
 
     if (resource === RESOURCE_ENERGY) {
-
+        const activeSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
         switch (creep.memory.role) {
             case 'upgrader':
             case 'worker':
-                const activeSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-
-                if (creep.harvest(activeSource) == ERR_NOT_IN_RANGE) creep.travelTo(activeSource);
-                break;
+                console.log(creep.harvest(activeSource))
+                if (creep.harvest(activeSource) == ERR_NOT_IN_RANGE) creep.travelTo(activeSource, creep.travelParams);
+                return 0;
+            case 'remouteWorker':
+                if (creep.harvest(activeSource) === ERR_NOT_IN_RANGE) creep.travelTo(activeSource, creep.travelParams);
+                if (creep.harvest(activeSource) === ERR_NOT_OWNER) {
+                    if (!Game.flags.fastAttack) creep.room.createFlag(creep.pos, 'fastAttack');
+                }
+                return 0;
         }
     }
     return 0;
@@ -161,5 +168,6 @@ Creep.prototype.refillJR = function () {
     const spawn = spawns[0];
     structures = structures.sort(function (a, b) { return spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b); });
 
-    if (creep.transfer(structures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.travelTo(structures[0]);
+    if (creep.transfer(structures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.travelTo(structures[0], creep.travelParams);
+    return 0;
 }
