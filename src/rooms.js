@@ -12,7 +12,7 @@ class Room {
                 if (Game.flags.fastAttack) return 1;
                 return 0;
             case 'upgrader': return 1;
-            case 'remouteWorker': return info.exit.length * 5;
+            case 'remouteWorker': return 0//info.exit.length * 5;
         }
     }
 
@@ -50,8 +50,8 @@ class Room {
     }
 
     static existRoom(arrayRoom) {
+        if (!arrayRoom.information.exit || (arrayRoom.information.exit && arrayRoom.information.exit < 1)) arrayRoom.information.exit = this.calculateExit(Game.rooms[arrayRoom.name]);
         arrayRoom.information.structures.needRepair = this.calculateRepair(Game.rooms[arrayRoom.name]);
-        arrayRoom.information.exit = this.calculateExit(Game.rooms[arrayRoom.name]);
         for (let i in roles) arrayRoom.information.amountCreeps[roles[i]] = this.amountCreeps(roles[i], Game.rooms[arrayRoom.name], arrayRoom.information);
         return 0;
     }
