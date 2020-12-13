@@ -18,6 +18,8 @@ const colors = {
     RESOURCE_ENERGY: '#fee56d'
 }
 
+const refillStructuresArray = [STRUCTURE_EXTENSION, STRUCTURE_SPAWN]
+
 const friends = ['JOURLOY'];
 
 const ERR_ROOM_WITHOUT_CONTROLLER = 'ERR_ROOM_WITHOUT_CONTROLLER';
@@ -32,3 +34,8 @@ const EXIT_TOP = 1;
 const EXIT_RIGHT = 3;
 const EXIT_BOTTOM = 5;
 const EXIT_LEFT = 7;
+
+const asciiLogoSmall = [`_    _ ___ _ _ ___ _  _ ____`,
+` \  /   |  |/   |  |\ | | __`,
+`  \/   _|_ |\_ _|_ | \| |__/`
+]
