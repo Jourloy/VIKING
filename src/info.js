@@ -53,7 +53,7 @@ function generateBody(options, availableEnergy) {
     const roads = options.isForRoad || false;
     const skipCarry = options.skipCarry || false;
     const mustBe = options.mustBe || [];
-    const moveParts = options.moveParts || true;
+    const moveParts = (options.moveParts != null) ? options.moveParts : true;
     const moveEach = options.moveEach || 1;
     const maxEnergy = options.maxEnergy || 50000;
     const priority = {};
