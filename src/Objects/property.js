@@ -282,6 +282,16 @@ Object.defineProperty(Room.prototype, 'tombstones', {
     configurable: true,
 });
 
+Object.defineProperty(Room.prototype, 'ruins', {
+    get: function() {
+        if (!this._ruins) {
+            this._ruins = this.find(FIND_RUINS);
+        }
+        return this._ruins;
+    },
+    configurable: true,
+});
+
 Object.defineProperty(Room.prototype, 'drops', {
     get: function() {
         if (!this._drops) {
@@ -316,12 +326,12 @@ Object.defineProperty(Room.prototype, 'information', {
     configurable: true,
 });
 
-/* Object.defineProperty(Room.prototype, 'exits', {
+Object.defineProperty(Room.prototype, 'exits', {
     get: function() {
-        return this.drops[RESOURCE_POWER] || [];
+        return Game.map.describeExits(this.name);
     },
     configurable: true,
-}); */
+});
 
 /* CONSOLE */
 
