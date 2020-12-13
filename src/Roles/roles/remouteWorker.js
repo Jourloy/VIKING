@@ -9,67 +9,68 @@ const remouteWorker = new VikingCreep({
 remouteWorker.run = (creep) => {
     if (creep.memory.birthRoom == null) creep.memory.birthRoom = creep.room.name;
     if (creep.memory.destinationRoom == null) {
-        const roomInfo = creep.findRoomInformation();
-        for (j in roomInfo.exit) {
-            for (let i in Game.creeps) {
-                const aCreep = Game.creeps[i];
-
-                let amount = 0;
-                if (aCreep.memory.role === 'remouteWorker' && aCreep.memory.destinationRoom != null && aCreep.memory.destinationRoom === roomInfo.exit[j]) amount++;
-
-                if (amount < 5) {
-                    creep.memory.destinationRoom = roomInfo.exit[j];
-                    break;
-                }
-            }
-
-            if (creep.memory.destinationRoom != null) break;
+        const exits = creep.room.exits;
+        const amountCreep = {
+            '1': (exits['1'] != null) ? 0 : 5,
+            '3': (exits['3'] != null) ? 0 : 5,
+            '5': (exits['5'] != null) ? 0 : 5,
+            '7': (exits['7'] != null) ? 0 : 5
         }
+        for (let i in Game.creeps) {
+            const aCreep = Game.creeps[i];
+            if (aCreep.memory.birthRoom === creep.memory.birthRoom && aCreep.memory.role === 'remouteWorker' && aCreep.memory.destinationRoom) {
+                amountCreep[aCreep.memory.destinationRoom]++;
+            }
+        }
+
+        if (amountCreep['1'] < 5) creep.memory.destinationRoom = '1';
+        else if (amountCreep['3'] < 5) creep.memory.destinationRoom = '3';
+        else if (amountCreep['5'] < 5) creep.memory.destinationRoom = '5';
+        else if (amountCreep['7'] < 5) creep.memory.destinationRoom = '7';
+    }
+    if (creep.memory.targetRoomName == null) {
+        creep.memory.targetRoomName = creep.room.exits[creep.memory.destinationRoom];
     }
 
     if (creep.store.getUsedCapacity() === 0) creep.memory.mode = 0;
     else if (creep.store.getUsedCapacity() === creep.store.getCapacity()) creep.memory.mode = 1;
-
     if (creep.memory.mode === 0) {
-        if (creep.memory.targetRoom == null) {
-            let roomDir;
-            switch (creep.memory.destinationRoom) {
-                case 1:
-                    roomDir = FIND_EXIT_TOP;
-                    break;
-                case 3:
-                    roomDir = FIND_EXIT_RIGHT;
-                    break;
-                case 5:
-                    roomDir = FIND_EXIT_BOTTOM;
-                    break;
-                case 7:
-                    roomDir = FIND_EXIT_LEFT;
-                    break;
-            }
-            creep.memory.targetRoom = creep.pos.findClosestByPath(roomDir);
-        }
+        const roomName = creep.memory.targetRoomName;
+        if (creep.inBirthRoom) {
+            creep.travelTo(new RoomPosition(25, 25, roomName));
+        } else if (creep.room.name === roomName) {
+            const source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
 
-        if (creep.room.name === creep.memory.birthRoom) creep.moveTo(creep.memory.targetRoom.x, creep.memory.targetRoom.y);
-        creep.getResource();
+            if (creep.harvest(source) === ERR_NOT_IN_RANGE) creep.travelTo(source);
+        } else creep.travelTo(new RoomPosition(25, 25, roomName));
     }
     else if (creep.memory.mode === 1) {
-        if (creep.room.name !== creep.memory.birthRoom) creep.travelTo(creep.memory.birthRoom);
-        const cs = creep.room.find(FIND_CONSTRUCTION_SITES);
-        let structures = creep.room.find(FIND_MY_STRUCTURES, {
-            filter: (strc) => {
-                return strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity());
+        if (creep.inBirthRoom) {
+            const structures = creep.room.structures;
+            const allCreeps = creep.room.find(FIND_MY_CREEPS);
+
+            let cs = creep.room.constructionSites;
+            let builders = allCreeps.filter(aCreep => aCreep.memory.role === 'builder');
+            if (cs.length > 0 && builders.length === 0) {
+                cs = cs.sort((a, b) => b.progress - a.progress);
             }
-        });
-        const spawns = creep.room.find(FIND_MY_SPAWNS);
-        const spawn = spawns[0];
-        structures = structures.sort(function (a, b) { return spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b); });
 
-        const roomInfo = creep.findRoomInformation();
+            let refillStructures = structures.filter(strc => refillStructuresArray.includes(strc.structureType) && strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity()));
+            let transporters = allCreeps.filter(aCreep => aCreep.memory.role === 'transporter');
+            if (refillStructures.length > 0 && transporters.length === 0) {
+                refillStructures = refillStructures.sort((a, b) => creep.pos.getRangeTo(a) - creep.pos.getRangeTo(b));
+            }
 
-        if (structures.length > 0) creep.refillJR()
-        else if (roomInfo.structures.needRepair.length > 0) creep.repairJR(roomInfo.structures.needRepair[0]);
-        else if (cs.length > 0) creep.buildJR(cs[0]);
-        else creep.upgradeJR();
+            let repairStructures = structures.filter(strc => strc.hits < strc.hitsMax);
+            let repairers = allCreeps.filter(aCreep => aCreep.memory.role === 'repairer');
+            if (repairStructures.length > 0 && repairers.length === 0) {
+                repairStructures = repairStructures.sort((a, b) => a.hits - b.hits);
+            }
+
+            if (refillStructures.length > 3) creep._refill(refillStructures[0]);
+            else if (repairStructures.length > 0 && repairers.length === 0) creep._repair(repairStructures[0]);
+            else if (cs.length > 0 && cs.length <= 3) creep._build(cs[0]);
+            else creep._upgrade();
+        } else creep.travelTo(new RoomPosition(25, 25, creep.memory.birthRoom));
     }
 }
