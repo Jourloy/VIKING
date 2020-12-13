@@ -3,7 +3,12 @@
 class _room {
     static amountCreeps(role, room, info) {
         switch(role) {
-            case 'miner': return 0
+            case 'miner':
+                let structures = room.structures;
+                structures = structures.filter(strc => strc.structureType === 'container');
+                if (structures.length === 0) return 0;
+                else if (structures.length === 1) return 1;
+                else return 2;
             case 'worker': 
                 if (room.controller.level < 2) return 20;
                 else if (room.controller.level > 1 && room.controller.level < 4) return 15;
@@ -108,5 +113,10 @@ class _room {
     static run() {
         this.sort();
         this.create();
+
+        for (let i in roomsArray) {
+            const room = Game.rooms[roomsArray[i].name];
+            Autobuild(room)
+        }
     }
 }
