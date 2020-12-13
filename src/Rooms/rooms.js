@@ -2,22 +2,45 @@
 
 class _room {
     static amountCreeps(role, room, info) {
+        let structures = room.structures;
         switch(role) {
             case 'miner':
-                let structures = room.structures;
                 structures = structures.filter(strc => strc.structureType === 'container');
                 if (structures.length === 0) return 0;
                 else if (structures.length === 1) return 1;
                 else return 2;
             case 'worker': 
                 if (room.controller.level < 2) return 20;
-                else if (room.controller.level > 1 && room.controller.level < 4) return 15;
+                else if (room.controller.level > 1 && room.controller.level < 3) return 15;
                 return 0;
+            case 'upgrader':
+                if (room.controller.level < 3) return 1;
+                else if (room.controller.level === 3) return 6;
+                else if (room.controller.level > 3 && room.controller.level < 8) return 2;
+                else return 1;
+            case 'repairer': 
+                if (room.controller.level < 3) return 1;
+                else return 2;
+            case 'builder':
+                if (room.controller.level < 3) return 1;
+                else return 2;
+            case 'transporter':
+                structures = structures.filter(strc => strc.structureType === 'container');
+                if (room.controller.level === 2 && structures.length > 0) return 1;
+                else if (room.controller.level >= 3) return 2;
             case 'warrior':
                 if (Game.flags.fastAttack) return 1;
                 return 0;
-            case 'upgrader': return 1;
-            case 'remouteWorker': return 0//info.exit.length * 5;
+            case 'remouteWorker':
+                if (room.controller.level < 5) {
+                    const exits = room.exits;
+                    let amount = 0;
+                    if (exits[1] != null) amount += 10;
+                    if (exits[3] != null) amount += 10;
+                    if (exits[5] != null) amount += 10;
+                    if (exits[7] != null) amount += 10;
+                    return amount;
+                } else return 0
         }
     }
 
@@ -93,11 +116,7 @@ class _room {
 
         for (let i in Game.rooms) {
             const room = Game.rooms[i];
-            if (!room.controller) return ERR_ROOM_WITHOUT_CONTROLLER;
-            if (room.controller && !room.controller.my) return ERR_ROOM_HOSTILE_CONTROLLER;
-            if (createdRooms.includes(Game.rooms[i].name)) return ERR_ROOM_WAS_CREATED;
-            this.nonExistsRoom(room);
-            return 0;
+            if (room.controller && room.controller.my != null && room.controller.my === true && !createdRooms.includes[room.name]) this.nonExistsRoom(room);
         }
     }
 
