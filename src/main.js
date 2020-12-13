@@ -7,6 +7,7 @@ function main() {
     _room.run();
     _creeps.run();
     _tower.run();
+    _sandbox.run();
 }
 
 exports.loop = main();
