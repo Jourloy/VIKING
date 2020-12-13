@@ -83,7 +83,7 @@ Creep.prototype.repairJR = function(structure) {
     return 0;
 };
 
-Creep.prototype.transferMe = function() {
+Creep.prototype._transfer = function() {
     const creep = this;
 
     creep.say('🚃');
@@ -100,7 +100,7 @@ Creep.prototype.transferMe = function() {
     if (trainHead.length == 0) {
         const trainHeadNew = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
-                return creep.memory.role == 'Harvester' || creep.memory.role == 'Transporter' || creep.memory.role == 'Helper' || creep.memory.role == 'Builder';
+                return creep.memory.role == 'worker' || creep.memory.role == 'Transporter' || creep.memory.role == 'Helper' || creep.memory.role == 'Builder';
             }
         });
 
@@ -188,20 +188,27 @@ Creep.prototype.findActiveSource = function () {
 };
 
 Creep.prototype.getResource = function (resource) {
-    const creep = this;
     if (resource == null) resource = RESOURCE_ENERGY;
 
     if (resource === RESOURCE_ENERGY) {
-        const activeSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-        switch (creep.memory.role) {
+        const activeSource = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+        switch (this.memory.role) {
             case 'upgrader':
             case 'worker':
-                if (creep.harvest(activeSource) == ERR_NOT_IN_RANGE) creep.travelTo(activeSource, creep.travelParams);
+                let structures = this.room.structures;
+                structures = structures.filter(strc => (strc.structureType === 'container' || strc.structureType === 'storage') && strc.store[RESOURCE_ENERGY] > this.store.getFreeCapacity());
+
+                if (structures.length > 0) {
+                    if (this.withdraw(structures[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) this.travelTo(structures[0], this.travelParams);
+                } else {
+                    if (this.harvest(activeSource) == ERR_NOT_IN_RANGE) this.travelTo(activeSource, this.travelParams);
+                }
+                
                 return 0;
             case 'remouteWorker':
-                if (creep.harvest(activeSource) === ERR_NOT_IN_RANGE) creep.travelTo(activeSource, creep.travelParams);
-                if (creep.harvest(activeSource) === ERR_NOT_OWNER) {
-                    if (!Game.flags.fastAttack) creep.room.createFlag(creep.pos, 'fastAttack');
+                if (this.harvest(activeSource) === ERR_NOT_IN_RANGE) this.travelTo(activeSource, this.travelParams);
+                if (this.harvest(activeSource) === ERR_NOT_OWNER) {
+                    if (!Game.flags.fastAttack) this.room.createFlag(this.pos, 'fastAttack');
                 }
                 return 0;
         }
