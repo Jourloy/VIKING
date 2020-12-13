@@ -49,6 +49,12 @@ class _viking {
             default: return 5;
         }
     }
+    static redFlags() {
+        for (let i in Game.flags) {
+            if (Game.flags[i].color === COLOR_RED) return true;
+        }
+        return false;
+    }
 }
 
 class _tool {
