@@ -322,3 +322,12 @@ Object.defineProperty(Room.prototype, 'information', {
     },
     configurable: true,
 }); */
+
+/* CONSOLE */
+
+Object.defineProperty(global, 'help', {
+    get: function() {
+        return _vikingConsole.help();
+    },
+    configurable: true,
+});
