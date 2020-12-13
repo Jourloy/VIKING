@@ -12,6 +12,7 @@
     "grunt-contrib-concat": "^1.0.1"
   },
   "dependencies": {
+    "bump": "^0.2.5",
     "grunt-bump": "^0.8.0"
   }
 }
