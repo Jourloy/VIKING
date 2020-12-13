@@ -1,7 +1,7 @@
 {
   "author": "JOURLOY <JOURLOY@yandex.ru>",
   "name": "viking",
-  "version": "0.2.148",
+  "version": "0.2.213",
   "bugs": "https://github.com/Jourloy/VIKING/issues",
   "scripts": {
     "build": "grunt",
