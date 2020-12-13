@@ -94,7 +94,7 @@ function BuildInRoom(room) {
     //for (i in RCL2['extension']['pos']) {
     //    room.createConstructionSite(RCL2['extension']['pos'][i].x, RCL2['extension']['pos'][i].y, STRUCTURE_EXTENSION)
     //}
-    if (room.controller.level > 3) for (i in containers) room.createConstructionSite(containers[i], STRUCTURE_CONTAINER);
+    if (room.controller.level >= 2) for (i in containers) room.createConstructionSite(containers[i], STRUCTURE_CONTAINER);
 }
 
 function CheckStructures(room, basicStructures) {
