@@ -2,25 +2,29 @@
 
 function workerLogic(creep) {
     const structures = creep.room.structures;
+    const allCreeps = creep.room.find(FIND_MY_CREEPS);
 
     let cs = creep.room.constructionSites;
-    if (cs.length > 0) {
+    let builders = allCreeps.filter(aCreep => aCreep.memory.role === 'builder');
+    if (cs.length > 0 && builders.length === 0) {
         cs = cs.sort((a, b) => b.progress - a.progress);
     }
 
     let refillStructures = structures.filter(strc => refillStructuresArray.includes(strc.structureType) && strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity()));
-    if (refillStructures.length > 0) {
+    let transporters = allCreeps.filter(aCreep => aCreep.memory.role === 'transporter');
+    if (refillStructures.length > 0 && transporters.length === 0) {
         refillStructures = refillStructures.sort((a, b) => creep.pos.getRangeTo(a) - creep.pos.getRangeTo(b));
     }
 
     let repairStructures = structures.filter(strc => strc.hits < strc.hitsMax);
-    if (repairStructures.length > 0) {
+    let repairers = allCreeps.filter(aCreep => aCreep.memory.role === 'repairer');
+    if (repairStructures.length > 0 && repairers.length === 0) {
         repairStructures = repairStructures.sort((a, b) => a.hits - b.hits);
     }
 
-    if (refillStructures.length > 0) creep._refill(refillStructures[0]);
-    else if (repairStructures.length > 0) creep._repair(repairStructures[0]);
-    else if (cs.length > 0) creep._build(cs[0]);
+    if (refillStructures.length > 0 && transporters.length === 0 || refillStructures.length > 4) creep._refill(refillStructures[0]);
+    else if (repairStructures.length > 0 && repairers.length === 0) creep._repair(repairStructures[0]);
+    else if (cs.length > 0 && builders.length === 0) creep._build(cs[0]);
     else creep._upgrade();
 }
 
@@ -41,8 +45,8 @@ worker.run = (creep) => {
 
             if (creep.memory.mode === 0) creep.getResource();
             else if (creep.memory.mode === 1) workerLogic(creep);
-        } else if (creep.memory.state === 'trainHead') {
-            const target = Game.getObjectById(creep.memory.train.target);
+        } else if (creep.memory.state === 'head') {
+            const target = Game.getObjectById(creep.memory.trainTarget);
             if (target != null) {
                 if (!Game.getObjectById(target.memory.destinationId).structureType || Game.getObjectById(target.memory.destinationId).structureType !== 'container') {
                     if (target.pos.isNearTo(Game.getObjectById(target.memory.destinationId))) creep.memory.state = null;
