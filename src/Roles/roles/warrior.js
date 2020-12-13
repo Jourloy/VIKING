@@ -7,7 +7,7 @@ const warrior = new VikingCreep({
     }
 });
 warrior.run = (creep) => {
-
+    if (creep.spawning) return;
     if (Game.flags.fastAttack) {
         if (Game.flags.fastAttack.room == null || creep.room !== Game.flags.fastAttack.room) creep.travelTo(Game.flags.fastAttack);
         else {
