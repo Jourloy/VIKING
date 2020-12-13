@@ -18,7 +18,7 @@ const colors = {
     RESOURCE_ENERGY: '#fee56d'
 }
 
-const refillStructuresArray = [STRUCTURE_EXTENSION, STRUCTURE_SPAWN]
+const refillStructuresArray = [STRUCTURE_EXTENSION, STRUCTURE_SPAWN, STRUCTURE_TOWER]
 
 const friends = ['JOURLOY'];
 
@@ -36,6 +36,6 @@ const EXIT_BOTTOM = 5;
 const EXIT_LEFT = 7;
 
 const asciiLogoSmall = [`_    _ ___ _ _ ___ _  _ ____`,
-` \  /   |  |/   |  |\ | | __`,
-`  \/   _|_ |\_ _|_ | \| |__/`
+` \\  /   |  |/   |  |\\ | | __`,
+`  \\/   _|_ |\\_ _|_ | \\| |__/`
 ]
