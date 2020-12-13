@@ -12,19 +12,6 @@
 /* STORAGE */
 /* TERMINAL */
 /* TOWER */
-
-/**
- * @deprecated
- */
-StructureTower.prototype.findHostileCreeps = function () {
-    _console.warning(`Tower used deprecated function (findHostileCreeps)`)
-    return this.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
-        filter: (creep) => {
-            return (!friends.includes(creep.owner.username) && creep.owner.username !== 'JOURLOY')
-        }
-    })
-};
-
 /* CREEP */
 
 Creep.prototype._build = function(structure) {
@@ -47,42 +34,6 @@ Creep.prototype._refill = function(structure) {
     return 0;
 }
 
-/**
- * @deprecated
- */
-Creep.prototype.findRoomInformation = function() {
-    _console.warning(`${this.memory.role} used deprecated function (findRoomInformation)`)
-    const creep = this;
-
-    for (i in roomsArray) {
-        if (roomsArray[i].name === creep.room.name) return roomsArray[i].information;
-    }
-
-    return ERR_ROOM_NOT_FOUND;
-}
-
-/**
- * @deprecated
- */
-Creep.prototype.buildJR = function(structure) {
-    _console.warning(`${this.memory.role} used deprecated function (buildJR)`)
-    const creep = this;
-
-    if (creep.build(structure) === ERR_NOT_IN_RANGE) creep.travelTo(structure, creep.travelParams);
-    return 0;
-};
-
-/**
- * @deprecated
- */
-Creep.prototype.repairJR = function(structure) {
-    _console.warning(`${this.memory.role} used deprecated function (repairJR)`)
-    const creep = this;
-
-    if (creep.repair(structures) === ERR_NOT_IN_RANGE) creep.travelTo(structures, creep.travelParams);
-    return 0;
-};
-
 Creep.prototype._transfer = function() {
     const creep = this;
 
@@ -93,19 +44,20 @@ Creep.prototype._transfer = function() {
 
     const trainHead = creep.room.find(FIND_MY_CREEPS, {
         filter: (creep) => {
-            return creep.memory.trainRole && creep.memory.trainRole == 'Head' && creep.memory.trainTarget && creep.memory.trainTarget == id;
+            return creep.memory.trainRole && creep.memory.trainRole == 'head' && creep.memory.trainTarget && creep.memory.trainTarget == id;
         }
     });
 
     if (trainHead.length == 0) {
         const trainHeadNew = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
-                return creep.memory.role == 'worker' || creep.memory.role == 'Transporter' || creep.memory.role == 'Helper' || creep.memory.role == 'Builder';
+                return creep.memory.role === 'worker' || creep.memory.role === 'upgrader';
             }
         });
 
         if (trainHeadNew.length > 0) {
-            trainHeadNew[0].memory.trainRole = 'Head';
+            trainHeadNew[0].memory.trainRole = 'head';
+            trainHeadNew[0].memory.state = 'head';
             trainHeadNew[0].memory.trainTarget = id;
             trainHeadNew[0].memory.time = Game.time;
         }
@@ -117,15 +69,7 @@ Creep.prototype._transfer = function() {
         train.say('🚂');
 
         if (train.pull(target) == ERR_NOT_IN_RANGE) {
-            train.travelTo(target, {
-                visualizePathStyle: {
-                    fill: 'transparent',
-                    stroke: '#FF0000',
-                    lineStyle: 'dashed',
-                    strokeWidth: .15,
-                    opacity: .1
-                }
-            });
+            train.travelTo(target);
         } else {
             target.move(train);
 
@@ -163,16 +107,6 @@ Creep.prototype.stateSay = function(state) {
     return 0;
 };
 
-/**
- * @deprecated
- */
-Creep.prototype.upgradeJR = function () {
-    _console.warning(`${this.memory.role} used deprecated function (upgradeJR)`)
-    const creep = this;
-    if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) creep.travelTo(creep.room.controller, creep.travelParams);
-    return 0;
-};
-
 Creep.prototype.findHostileCreeps = function () {
     const creep = this;
     return creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
@@ -193,8 +127,13 @@ Creep.prototype.getResource = function (resource) {
     if (resource === RESOURCE_ENERGY) {
         const activeSource = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
         switch (this.memory.role) {
-            case 'upgrader':
-            case 'worker':
+            case 'remouteWorker':
+                if (this.harvest(activeSource) === ERR_NOT_IN_RANGE) this.travelTo(activeSource, this.travelParams);
+                if (this.harvest(activeSource) === ERR_NOT_OWNER) {
+                    if (!Game.flags.fastAttack) this.room.createFlag(this.pos, 'fastAttack');
+                }
+                return 0;
+            default:
                 let structures = this.room.structures;
                 structures = structures.filter(strc => (strc.structureType === 'container' || strc.structureType === 'storage') && strc.store[RESOURCE_ENERGY] > this.store.getFreeCapacity());
 
@@ -205,33 +144,7 @@ Creep.prototype.getResource = function (resource) {
                 }
                 
                 return 0;
-            case 'remouteWorker':
-                if (this.harvest(activeSource) === ERR_NOT_IN_RANGE) this.travelTo(activeSource, this.travelParams);
-                if (this.harvest(activeSource) === ERR_NOT_OWNER) {
-                    if (!Game.flags.fastAttack) this.room.createFlag(this.pos, 'fastAttack');
-                }
-                return 0;
         }
     }
-    return 0;
-}
-
-/**
- * @deprecated
- */
-Creep.prototype.refillJR = function () {
-    _console.warning(`${this.memory.role} used deprecated function (refillJR)`)
-    const creep = this;
-
-    let structures = creep.room.find(FIND_MY_STRUCTURES, {
-        filter: (strc) => {
-            return strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity());
-        }
-    });
-    const spawns = creep.room.find(FIND_MY_SPAWNS);
-    const spawn = spawns[0];
-    structures = structures.sort(function (a, b) { return spawn.pos.getRangeTo(a) - spawn.pos.getRangeTo(b); });
-
-    if (creep.transfer(structures[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.travelTo(structures[0], creep.travelParams);
     return 0;
 }
