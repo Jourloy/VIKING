@@ -11,10 +11,10 @@ remouteWorker.run = (creep) => {
     if (creep.memory.destinationRoom == null) {
         const exits = creep.room.exits;
         const amountCreep = {
-            '1': (exits['1'] != null) ? 0 : 5,
-            '3': (exits['3'] != null) ? 0 : 5,
-            '5': (exits['5'] != null) ? 0 : 5,
-            '7': (exits['7'] != null) ? 0 : 5
+            '1': (exits['1'] != null) ? 0 : 15,
+            '3': (exits['3'] != null) ? 0 : 15,
+            '5': (exits['5'] != null) ? 0 : 15,
+            '7': (exits['7'] != null) ? 0 : 15
         }
         for (let i in Game.creeps) {
             const aCreep = Game.creeps[i];
@@ -23,10 +23,10 @@ remouteWorker.run = (creep) => {
             }
         }
 
-        if (amountCreep['1'] < 5) creep.memory.destinationRoom = '1';
-        else if (amountCreep['3'] < 5) creep.memory.destinationRoom = '3';
-        else if (amountCreep['5'] < 5) creep.memory.destinationRoom = '5';
-        else if (amountCreep['7'] < 5) creep.memory.destinationRoom = '7';
+        if (amountCreep['1'] < 15) creep.memory.destinationRoom = '1';
+        else if (amountCreep['3'] < 15) creep.memory.destinationRoom = '3';
+        else if (amountCreep['5'] < 15) creep.memory.destinationRoom = '5';
+        else if (amountCreep['7'] < 15) creep.memory.destinationRoom = '7';
     }
     if (creep.memory.targetRoomName == null) {
         creep.memory.targetRoomName = creep.room.exits[creep.memory.destinationRoom];
@@ -57,6 +57,7 @@ remouteWorker.run = (creep) => {
 
             let refillStructures = structures.filter(strc => refillStructuresArray.includes(strc.structureType) && strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity()));
             let transporters = allCreeps.filter(aCreep => aCreep.memory.role === 'transporter');
+            let miners = allCreeps.filter(aCreep => aCreep.memory.role === 'miner');
             if (refillStructures.length > 0 && transporters.length === 0) {
                 refillStructures = refillStructures.sort((a, b) => creep.pos.getRangeTo(a) - creep.pos.getRangeTo(b));
             }
@@ -67,9 +68,9 @@ remouteWorker.run = (creep) => {
                 repairStructures = repairStructures.sort((a, b) => a.hits - b.hits);
             }
 
-            if (refillStructures.length > 3) creep._refill(refillStructures[0]);
+            if (refillStructures.length > 3 || (refillStructures.length > 0 && transporters.length === 1 && miners.length < 2)) creep._refill(refillStructures[0]);
             else if (repairStructures.length > 0 && repairers.length === 0) creep._repair(repairStructures[0]);
-            else if (cs.length > 0 && cs.length <= 3) creep._build(cs[0]);
+            else if (cs.length > 0 && builders < 2 || cs.length > 3) creep._build(cs[0]);
             else creep._upgrade();
         } else creep.travelTo(new RoomPosition(25, 25, creep.memory.birthRoom));
     }
