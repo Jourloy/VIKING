@@ -7,11 +7,10 @@ class _room {
             case 'miner':
                 structures = structures.filter(strc => strc.structureType === 'container');
                 if (structures.length === 0) return 0;
-                else if (structures.length === 1) return 1;
-                else return 2;
+                else if (structures.length === 2) return 2;
+                else return 0;
             case 'worker': 
-                if (room.controller.level < 2) return 20;
-                else if (room.controller.level > 1 && room.controller.level < 3) return 15;
+                if (room.controller.level < 4) return 20;
                 return 0;
             case 'upgrader':
                 if (room.controller.level < 3) return 1;
@@ -32,14 +31,14 @@ class _room {
                 if (Game.flags.fastAttack) return 1;
                 return 0;
             case 'remouteWorker':
-                if (room.controller.level < 5) {
+                if (room.controller.level < 4) {
                     const exits = room.exits;
                     let amount = 0;
-                    if (exits[1] != null) amount += 10;
-                    if (exits[3] != null) amount += 10;
-                    if (exits[5] != null) amount += 10;
-                    if (exits[7] != null) amount += 10;
-                    return amount;
+                    if (exits[1] != null) amount += 15;
+                    if (exits[3] != null) amount += 15;
+                    if (exits[5] != null) amount += 15;
+                    if (exits[7] != null) amount += 15;
+                    return amount
                 } else return 0
         }
     }
