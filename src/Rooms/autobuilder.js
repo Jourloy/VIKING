@@ -257,10 +257,10 @@ function RCL8RoomBuilder(room) {
 function Autobuild(room) {
     switch(room.controller.level) {
         case 2:
-            if (Game.time%21===20) RCL2RoomBuilder(room)
+            //if (Game.time%21===20) RCL2RoomBuilder(room)
             break;
         case 3:
-            if (Game.time%21===20) RCL3RoomBuilder(room)
+            //if (Game.time%21===20) RCL3RoomBuilder(room)
             break;
         case 4:
             if (Game.time%21===20) RCL4RoomBuilder(room)
