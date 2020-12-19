@@ -1,6 +1,6 @@
 // upgrader.js
 
-const upgrader = new VikingCreep({
+const upgrader = new _creep({
     role: 'upgrader',
     body: {
         pattern: [WORK, CARRY]
