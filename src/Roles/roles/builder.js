@@ -1,6 +1,6 @@
 // builder.js
 
-const builder = new VikingCreep({
+const builder = new _creep({
     role: 'builder',
     body: {
         pattern: [WORK, CARRY]
