@@ -100,16 +100,16 @@ class _room {
             autobuilder: true,
             information: information,
         }
-        new VikingRoom(options);
+        new _room(options);
     }
 
     static create() {
         const createdRooms = [];
 
-        if (roomsArray.length > 0) {
-            for (let i in roomsArray) {
-                this.existRoom(roomsArray[i])
-                createdRooms.push(roomsArray[i].name);
+        if (array.rooms.length > 0) {
+            for (let i in array.rooms) {
+                this.existRoom(array.rooms[i])
+                createdRooms.push(array.rooms[i].name);
             }
         }
 
@@ -120,11 +120,11 @@ class _room {
     }
 
     static sort() {
-        for (let i in roomsArray) {
-            const room = Game.rooms[roomsArray[i].name];
+        for (let i in array.rooms) {
+            const room = Game.rooms[array.rooms[i].name];
             const newArray = [];
-            if (room != null && room.controller != null && room.controller.my !== false) newArray.push(roomsArray[i]);
-            roomsArray = newArray;
+            if (room != null && room.controller != null && room.controller.my !== false) newArray.push(array.rooms[i]);
+            array.rooms = newArray;
         }
     }
 
@@ -132,8 +132,8 @@ class _room {
         this.sort();
         this.create();
 
-        for (let i in roomsArray) {
-            const room = Game.rooms[roomsArray[i].name];
+        for (let i in array.rooms) {
+            const room = Game.rooms[array.rooms[i].name];
             Autobuild(room)
         }
     }
