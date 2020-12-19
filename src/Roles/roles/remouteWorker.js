@@ -1,6 +1,6 @@
 // remouteWorker.js
 
-const remouteWorker = new VikingCreep({
+const remouteWorker = new _creep({
     role: 'remouteWorker',
     body: {
         pattern: [WORK, CARRY],
