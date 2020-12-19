@@ -2,6 +2,13 @@
 
 const creepArray = [];
 let roomsArray = [];
+
+let array = {
+    creep: [],
+    rooms: [],
+    remoteRooms: [],
+}
+
 const roles = [];
 let queue = [];
 
