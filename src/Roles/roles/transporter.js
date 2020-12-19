@@ -1,6 +1,6 @@
 // transporter.js
 
-const transporter = new VikingCreep({
+const transporter = new _creep({
     role: 'transporter',
     body: {
         pattern: [CARRY]
