@@ -1,6 +1,6 @@
 // miner.js
 
-const miner = new VikingCreep({
+const miner = new _creep({
     role: 'miner',
     body: {
         pattern: [WORK],
