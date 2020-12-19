@@ -318,8 +318,8 @@ Object.defineProperty(Room.prototype, 'droppedPower', {
 
 Object.defineProperty(Room.prototype, 'information', {
     get: function() {
-        for (i in roomsArray) {
-            if (roomsArray[i].name === this.name) return roomsArray[i].information;
+        for (i in array.rooms) {
+            if (array.rooms[i].name === this.name) return array.rooms[i].information;
         }
         return ERR_ROOM_INFORMATION_NOT_FOUND
     },
