@@ -1,6 +1,6 @@
 // repairer.js
 
-const repairer = new VikingCreep({
+const repairer = new _creep({
     role: 'repairer',
     body: {
         pattern: [WORK, CARRY]
