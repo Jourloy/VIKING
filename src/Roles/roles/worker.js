@@ -29,7 +29,7 @@ function workerLogic(creep) {
     else creep._upgrade();
 }
 
-const worker = new VikingCreep({
+const worker = new _creep({
     role: 'worker',
     body: {
         pattern: [WORK, CARRY],
