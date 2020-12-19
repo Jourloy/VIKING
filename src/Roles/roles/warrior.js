@@ -1,6 +1,6 @@
 // warrior.js
 
-const warrior = new VikingCreep({
+const warrior = new _creep({
     role: 'warrior',
     body: {
         pattern: [ATTACK],
