@@ -39,8 +39,8 @@ class _creeps {
     static spawnCreeps() {
         this.amountCreepsIsLive();
 
-        for (let i in roomsArray) {
-            const room = roomsArray[i];
+        for (let i in array.rooms) {
+            const room = array.rooms[i];
             queue = [];
             for (let j in room.information.amountCreeps) {
                 if (room.information.amountCreeps[j] > creepStatistic.amountIsLive[room.name + '.' + j]) queue.push({ role: j, room: room.name });
@@ -60,8 +60,8 @@ class _creeps {
 
     static runCreeps() {
         for (let i in Game.creeps) {
-            for (let j in creepArray) {
-                if (creepArray[j].role === Game.creeps[i].memory.role) creepArray[j].run(Game.creeps[i]);
+            for (let j in array.creep) {
+                if (array.creep[j].role === Game.creeps[i].memory.role) array.creep[j].run(Game.creeps[i]);
             }
         }
     }
