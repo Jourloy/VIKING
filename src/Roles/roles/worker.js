@@ -33,6 +33,7 @@ const worker = new _creep({
     role: 'worker',
     body: {
         pattern: [WORK, CARRY],
+        count: 4,
     }
 });
 
