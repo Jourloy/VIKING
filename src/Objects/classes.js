@@ -38,6 +38,51 @@ class _remoteRoom {
     constructor(options) {
         if (options == null) return ERR_ARGS;
 
+        this.name = options.name;
+        this.exit = options.exit;
+        this.master = options.master;
+        this.ban = options.ban || false;
+
         array.remoteRooms.push(this);
+    }
+}
+
+class _sort {
+    static body(bodyPart) {
+        switch (bodyPart) {
+            case HEAL: return -1;
+            case MOVE: return 2;
+            case RANGED_ATTACK: return 1;
+            case ATTACK: return 0;
+            case WORK: return 7;
+            case TOUGH: return 10;
+            default: return 5;
+        }
+    }
+
+    static constructionSites(structure) {
+        switch (structure) {
+            case STRUCTURE_SPAWN: return 30;
+            case STRUCTURE_TOWER: return 25;
+            case STRUCTURE_RAMPART: return 20;
+            case STRUCTURE_WALL: return 15;
+            case STRUCTURE_EXTENSION: return 10;
+            case STRUCTURE_STORAGE: 6;
+            case STRUCTURE_ROAD: return 0;
+            case STRUCTURE_LAB: return -30;
+            default: return 5;
+        }
+    }
+
+    static creep(role) {
+        switch (role) {
+            case 'worker': return 100;
+            case 'miner': return 90;
+            case 'transporter': return 80;
+            case 'repairer': return 70;
+            case 'renamer': return -90;
+            case 'seller': return -100;
+            default: 0
+        }
     }
 }
