@@ -1,16 +1,17 @@
 /**
- *
- *
- * _____________________ VIKING _____________________
+ * ____________________________________________
+ *       _    _ ___ _ _ ___ _  _ ____
+ *        \  /   |  |/   |  |\ | | __
+ *         \/   _|_ |\_ _|_ | \| |__/
+ * ____________________________________________
  * @repository: https://github.com/Jourloy/VIKING
  * @author: JOURLOY
  *
  */
 
- /**
-  * How add new creep role:
-  */
-
+/**
+ * @author Sergey from screeps slack [modificated]
+ */
 function generateBody(options, availableEnergy) {
     if (options == null) return ERR_ARGS;
 
@@ -20,7 +21,6 @@ function generateBody(options, availableEnergy) {
     const moveParts = (options.moveParts != null) ? options.moveParts : true;
     const moveEach = options.moveEach || 1;
     const maxEnergy = options.maxEnergy || 50000;
-    const priority = {};
     const pattern = options.pattern;
     let count = options.count || 50;
 
@@ -60,7 +60,7 @@ function generateBody(options, availableEnergy) {
         count--;
         index = (index + 1) % pattern.length;
     }
-    return body.sort((a, b) => (priority[b] || _viking.bodyPriority(b)) - (priority[a] || _viking.bodyPriority(a)));
+    return body.sort((a, b) => (_sort.body(b) - _sort.body(a)));
 }
 
 function spawnProcess(spawn, role, room) {
