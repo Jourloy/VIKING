@@ -1,16 +1,20 @@
 // rooms.js
 
-class _room {
+class _rooms {
     static amountCreeps(role, room, info) {
         let structures = room.structures;
+        const allCreeps =  room.find(FIND_MY_CREEPS);
         switch(role) {
             case 'miner':
                 structures = structures.filter(strc => strc.structureType === 'container');
-                if (structures.length === 0) return 0;
-                else if (structures.length === 2) return 2;
+                if (structures.length >= 2) return 2;
                 else return 0;
             case 'worker': 
+                let refillStructures = structures.filter(strc => refillStructuresArray.includes(strc.structureType) && strc.store && (strc.store.getCapacity() == null ? strc.store.getUsedCapacity(RESOURCE_ENERGY) < strc.store.getCapacity(RESOURCE_ENERGY) : strc.store.getUsedCapacity() < strc.store.getCapacity()));
+                let transporters = allCreeps.filter(aCreep => aCreep.memory.role === 'transporter');
+                let miners = allCreeps.filter(aCreep => aCreep.memory.role === 'miner');
                 if (room.controller.level < 4) return 20;
+                else if (refillStructures.length > 0 && (transporters.length === 0 || miners.length === 0)) return 3;
                 return 0;
             case 'upgrader':
                 if (room.controller.level < 3) return 1;
@@ -31,15 +35,28 @@ class _room {
                 if (Game.flags.fastAttack) return 1;
                 return 0;
             case 'remouteWorker':
-                if (room.controller.level < 4) {
-                    const exits = room.exits;
-                    let amount = 0;
-                    if (exits[1] != null) amount += 15;
-                    if (exits[3] != null) amount += 15;
-                    if (exits[5] != null) amount += 15;
-                    if (exits[7] != null) amount += 15;
-                    return amount
-                } else return 0
+                const remoteRooms = room.remote;
+                const exits = room.exits;
+                let amount = 0;
+                let availableRooms = 0;
+
+                if (exits['1'] != null) availableRooms++;
+                if (exits['3'] != null) availableRooms++;
+                if (exits['5'] != null) availableRooms++;
+                if (exits['7'] != null) availableRooms++;
+
+                for (let i = 0; i < availableRooms; i++) {
+                    if (remoteRooms[i] != null) {
+                        if (remoteRooms[i].ban === false) {
+                            if (room.controller.level < 4 && room.fastUpgrade) amount += 15;
+                            else {
+                                if (room.constructionSites.length > 3) amount += 10;
+                                amount += 5;
+                            }
+                        }
+                    } else amount++;
+                }
+                return amount;
         }
     }
 
@@ -126,14 +143,49 @@ class _room {
             if (room != null && room.controller != null && room.controller.my !== false) newArray.push(array.rooms[i]);
             array.rooms = newArray;
         }
+
+        for (let i in Memory.remoteRooms) {
+            const room = Game.rooms[Memory.remoteRooms[i].master];
+            if (room == null || room.controller == null) delete Memory.remoteRooms[i];
+        }
+    }
+
+    static control() {
+        for (let i in array.rooms) {
+            const room = Game.rooms[array.rooms[i].name];
+
+            if (array.rooms.length === 1 && !Game.flags.capital) room.createFlag(25, 25, 'capital', COLOR_WHITE, COLOR_WHITE);
+            if (Game.flags.fastUpgrade && room.controller.level >= 4 && Game.flags.fastUpgrade.room === room) Game.flags.fastUpgrade.remove();
+            if (!Game.flags.fastUpgrade && room.capital && room.controller.level < 4) room.createFlag(25, 24, 'fastUpgrade', COLOR_WHITE, COLOR_PURPLE)
+        }
+    }
+
+    static visual(room) {
+        const points = [];
+        points.push([1,1]);
+        points.push([2,1]);
+        points.push([3,6]);
+        points.push([4,6]);
+        points.push([5,1]);
+        points.push([6,1]);
+        points.push([6,0.5]);
+        points.push([4.5,0.5]);
+        points.push([3.6,5.5]);
+        points.push([3.4,5.5]);
+        points.push([2.5,0.5]);
+        points.push([1,0.5]);
+        points.push([1,1]);
+        new RoomVisual(room.name).poly(points, {stroke: 'red', fill: 'red'}); 
     }
 
     static run() {
         this.sort();
         this.create();
+        this.control();
 
         for (let i in array.rooms) {
             const room = Game.rooms[array.rooms[i].name];
+            this.visual(room);
             Autobuild(room)
         }
     }
