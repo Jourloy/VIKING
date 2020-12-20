@@ -5,7 +5,13 @@ class _memory {
         }
     }
 
+    static def() {
+        if (!Memory.remoteRooms) Memory.remoteRooms = {};
+        else Memory.remoteRooms = Memory.remoteRooms;
+    }
+
     static run() {
         this.clear();
+        this.def();
     }
 }
