@@ -9,25 +9,74 @@ const remouteWorker = new _creep({
 remouteWorker.run = (creep) => {
     if (creep.memory.birthRoom == null) creep.memory.birthRoom = creep.room.name;
     if (creep.memory.destinationRoom == null) {
+
+        const remoteRooms = creep.room.remote;
         const exits = creep.room.exits;
-        const amountCreep = {
-            '1': (exits['1'] != null) ? 0 : 15,
-            '3': (exits['3'] != null) ? 0 : 15,
-            '5': (exits['5'] != null) ? 0 : 15,
-            '7': (exits['7'] != null) ? 0 : 15
-        }
-        for (let i in Game.creeps) {
-            const aCreep = Game.creeps[i];
-            if (aCreep.memory.birthRoom === creep.memory.birthRoom && aCreep.memory.role === 'remouteWorker' && aCreep.memory.destinationRoom) {
-                amountCreep[aCreep.memory.destinationRoom]++;
+        const creeps = {
+            need: {
+                '1': (exits['1'] != null) ? 0 : null,
+                '3': (exits['3'] != null) ? 0 : null,
+                '5': (exits['5'] != null) ? 0 : null,
+                '7': (exits['7'] != null) ? 0 : null,
+            },
+            live: {
+                '1': (exits['1'] != null) ? 0 : null,
+                '3': (exits['3'] != null) ? 0 : null,
+                '5': (exits['5'] != null) ? 0 : null,
+                '7': (exits['7'] != null) ? 0 : null,
             }
         }
 
-        if (amountCreep['1'] < 15) creep.memory.destinationRoom = '1';
-        else if (amountCreep['3'] < 15) creep.memory.destinationRoom = '3';
-        else if (amountCreep['5'] < 15) creep.memory.destinationRoom = '5';
-        else if (amountCreep['7'] < 15) creep.memory.destinationRoom = '7';
+        const rooms = {
+            available: 0,
+            exits: [],
+        }
+
+        if (exits['1'] != null) {
+            rooms.available++;
+            rooms.exits.push('1');
+        }
+        if (exits['3'] != null) {
+            rooms.available++;
+            rooms.exits.push('3');
+        }
+        if (exits['5'] != null) {
+            rooms.available++;
+            rooms.exits.push('5');
+        }
+        if (exits['7'] != null) {
+            rooms.available++;
+            rooms.exits.push('7');
+        }
+
+        for (let i = 0; i < rooms.available; i++) {
+            if (remoteRooms[i] != null) {
+                if (remoteRooms[i].ban === false) {
+                    if (creep.room.controller.level < 4 && creep.room.fastUpgrade) creeps.need[remoteRooms[i].exit] += 15;
+                    else {
+                        if (creep.room.constructionSites.length > 3) creeps.need[remoteRooms[i].exit] += 10;
+                        creeps.need[remoteRooms[i].exit] += 5;
+                    }
+                }
+            } else {
+                const dest = rooms.exits[i];
+                creeps.need[dest] = 1;
+            }
+        }
+
+        for (let i in Game.creeps) {
+            const aCreep = Game.creeps[i];
+            if (aCreep.memory.birthRoom === creep.memory.birthRoom && aCreep.memory.role === 'remouteWorker' && aCreep.memory.destinationRoom) {
+                creeps.live[aCreep.memory.destinationRoom]++;
+            }
+        }
+
+        if (creeps.live['1'] < creeps.need['1']) creep.memory.destinationRoom = '1';
+        else if (creeps.live['3'] < creeps.need['3']) creep.memory.destinationRoom = '3';
+        else if (creeps.live['5'] < creeps.need['5']) creep.memory.destinationRoom = '5';
+        else if (creeps.live['7'] < creeps.need['7']) creep.memory.destinationRoom = '7';
     }
+
     if (creep.memory.targetRoomName == null) {
         creep.memory.targetRoomName = creep.room.exits[creep.memory.destinationRoom];
     }
@@ -36,12 +85,39 @@ remouteWorker.run = (creep) => {
     else if (creep.store.getUsedCapacity() === creep.store.getCapacity()) creep.memory.mode = 1;
     if (creep.memory.mode === 0) {
         const roomName = creep.memory.targetRoomName;
-        if (creep.inBirthRoom) {
-            creep.travelTo(new RoomPosition(25, 25, roomName));
-        } else if (creep.room.name === roomName) {
-            const source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+        if (creep.room.name === roomName) {
+            let check = false;
+            for (let i in Memory.remoteRooms) {
+                if (Memory.remoteRooms[i].name === creep.room.name) check = true;
+            }
+            if (check === false) {
+                const options = {
+                    name: creep.room.name,
+                    exit: creep.memory.destinationRoom,
+                    master: creep.memory.birthRoom,
+                    ban: false,
+                }
 
-            if (creep.harvest(source) === ERR_NOT_IN_RANGE) creep.travelTo(source);
+                if (creep.room.controller) {
+                    if (creep.room.owner != null) options.ban = true; 
+                } else options.ban = true;
+
+                delete Memory.remoteRooms[options.name];
+                Memory.remoteRooms[options.name] = options;
+            }
+
+            if (creep.room.hostileCreeps.length > 2) {
+                for (let i in Memory.remoteRooms) {
+                    if (Memory.remoteRooms[i].name === creep.room.name) Memory.remoteRooms[i].ban = true;
+                }
+                creep.memory.role = worker;
+            } else {
+                if (Memory.remoteRooms[creep.room.name].ban === true) creep.memory.role = worker;
+                else {
+                    const source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+                    if (creep.harvest(source) === ERR_NOT_IN_RANGE) creep.travelTo(source);
+                }
+            }
         } else creep.travelTo(new RoomPosition(25, 25, roomName));
     }
     else if (creep.memory.mode === 1) {
