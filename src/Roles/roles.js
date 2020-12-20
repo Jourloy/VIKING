@@ -52,6 +52,8 @@ class _creeps {
                 }
             });
 
+            queue = queue.sort((a, b) => (_sort.creep(b.role) - _sort.creep(a.role)));
+
             for (let j in queue) {
                 if (spawns[0].spawning == null) spawnProcess(spawns[0], queue[j].role, Game.rooms[queue[j].room]);
             }
