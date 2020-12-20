@@ -267,7 +267,7 @@ Object.defineProperty(Room.prototype, 'constructionSites', {
         if (!this._constructionSites) {
             this._constructionSites = this.find(FIND_MY_CONSTRUCTION_SITES);
         }
-        return this._constructionSites;
+        return this._constructionSites.sort((a, b) => (_sort.constructionSites(b.structureType) - _sort.constructionSites(a.structureType)));
     },
     configurable: true,
 });
@@ -329,6 +329,40 @@ Object.defineProperty(Room.prototype, 'information', {
 Object.defineProperty(Room.prototype, 'exits', {
     get: function() {
         return Game.map.describeExits(this.name);
+    },
+    configurable: true,
+});
+
+Object.defineProperty(Room.prototype, 'fastUpgrade', {
+    get: function() {
+        const flags = this.find(FIND_FLAGS);
+        for (let i in flags) {
+            const flag = flags[i];
+
+            if (flag.color === COLOR_WHITE && flag.secondaryColor === COLOR_PURPLE) return true;
+        }
+        return false;
+    },
+    configurable: true,
+});
+
+Object.defineProperty(Room.prototype, 'capital', {
+    get: function() {
+        if (Game.flags.capital && Game.flags.capital.room == this) return true;
+        return false;
+    },
+    configurable: true,
+});
+
+Object.defineProperty(Room.prototype, 'remote', {
+    get: function() {
+        const remote = [];
+
+        for (let i in Memory.remoteRooms) {
+            if (Memory.remoteRooms[i].master === this.name) remote.push(Memory.remoteRooms[i]);
+        }
+
+        return remote;
     },
     configurable: true,
 });
