@@ -14,6 +14,12 @@
 /* TOWER */
 /* CREEP */
 
+Creep.prototype._say = function(text, bool) {
+    const splitedText = text.split(' ');
+    this.say(splitedText[Game.time % splitedText.length], bool);
+    return 0;
+}
+
 Creep.prototype._build = function(structure) {
     if (this.build(structure) === ERR_NOT_IN_RANGE) this.travelTo(structure, this.travelParams);
     return 0;
