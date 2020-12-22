@@ -32,6 +32,7 @@ class _rooms {
                 if (room.controller.level === 2 && structures.length > 0) return 1;
                 else if (room.controller.level >= 3) return 2;
             case 'warrior':
+                if (room.defenseFlag.length > 0) return Math.ceil(room.hostileCreeps.length / 2);
                 if (Game.flags.fastAttack) return 1;
                 return 0;
             case 'remouteWorker':
@@ -155,8 +156,14 @@ class _rooms {
             const room = Game.rooms[array.rooms[i].name];
 
             if (array.rooms.length === 1 && !Game.flags.capital) room.createFlag(25, 25, 'capital', COLOR_WHITE, COLOR_WHITE);
-            if (Game.flags.fastUpgrade && room.controller.level >= 4 && Game.flags.fastUpgrade.room === room) Game.flags.fastUpgrade.remove();
             if (!Game.flags.fastUpgrade && room.capital && room.controller.level < 4) room.createFlag(25, 24, 'fastUpgrade', COLOR_WHITE, COLOR_PURPLE)
+            if (room.hostileCreeps.length > 0) {
+                if (room.defenseFlag.length === 0) room.createFlag(10, 10, _tool.generateString(12), COLOR_RED, COLOR_WHITE);
+            }
+
+
+            if (Game.flags.fastUpgrade && room.controller.level >= 4 && Game.flags.fastUpgrade.room === room) Game.flags.fastUpgrade.remove();
+            if (room.defenseFlag.length > 0 && room.hostileCreeps.length === 0) room.defenseFlag[0].remove();
         }
     }
 
