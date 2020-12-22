@@ -76,6 +76,7 @@ class _sort {
 
     static creep(role) {
         switch (role) {
+            case 'warrior': return 110;
             case 'worker': return 100;
             case 'miner': return 90;
             case 'transporter': return 80;
