@@ -168,12 +168,25 @@ Object.defineProperty(Room.prototype, 'reservedByMe', {
     configurable: true,
 });
 
+/**
+ * @deprecated
+ */
 Object.defineProperty(Room.prototype, 'hostileCreeps', {
     get: function() {
         if (!this._hostileCreeps) {
             this._hostileCreeps = this.find(FIND_HOSTILE_CREEPS, creep => !friends.includes(creep.owner.username));
         }
         return this._hostileCreeps;
+    },
+    configurable: true,
+});
+
+Object.defineProperty(Room.prototype, 'hostiles', {
+    get: function() {
+        if (!this._hostiles) {
+            this._hostiles = this.find(FIND_HOSTILE_CREEPS, creep => !friends.includes(creep.owner.username));
+        }
+        return this._hostiles;
     },
     configurable: true,
 });
@@ -363,6 +376,15 @@ Object.defineProperty(Room.prototype, 'remote', {
         }
 
         return remote;
+    },
+    configurable: true,
+});
+
+Object.defineProperty(Room.prototype, 'defenseFlag', {
+    get: function() {
+        let flags = this.find(FIND_FLAGS);
+        flags = flags.filter(flag => (flag.color === COLOR_RED && flag.secondaryColor === COLOR_WHITE));
+        return flags;
     },
     configurable: true,
 });
