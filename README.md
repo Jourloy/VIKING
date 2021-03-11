@@ -10,6 +10,20 @@ ____________________________________________
 
 PRIMARY COLOR | SECONDARY COLOR | DESCRIPTION
 --------------|-----------------|------------
+RED | | War management
+RED | RED |
+RED | PURPLE |
+RED | BLUE | Defence remote room
+RED | CYAN |
+RED | GREEN |
+RED | YELLOW |
+RED | ORANGE |
+RED | BROWN |
+RED | GREY |
+RED | WHITE | Defence room
+
+PRIMARY COLOR | SECONDARY COLOR | DESCRIPTION
+--------------|-----------------|------------
 WHITE | | Room management
 WHITE | RED |
 WHITE | PURPLE | Fast upgrade to 4 RCL using only room creeps
@@ -21,14 +35,5 @@ WHITE | ORANGE |
 WHITE | BROWN |
 WHITE | GREY |
 WHITE | WHITE | Captital room
-RED | | War management
-RED | RED |
-RED | PURPLE |
-RED | BLUE |
-RED | CYAN |
-RED | GREEN |
-RED | YELLOW |
-RED | ORANGE |
-RED | BROWN |
-RED | GREY |
-RED | WHITE | Defense room
+
+---
