@@ -1,8 +1,8 @@
+
 .DS_Store
 Gruntfile.js
 node_modules
 package-lock.json
-screeps.json
-tsconfig.json
-rollup.config.js
-_*
+ScreepsAutocomplete
+.tern-project
+*.code-workspace
